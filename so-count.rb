@@ -7,7 +7,7 @@ require 'mysql';
 
 def main()
     so = StackOverflow.new();
-    dbh =  SOsql.new();
+    dbh =  SOsql.init();
     dbh.easy_connect;
 
 	# insert the total question count
