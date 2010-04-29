@@ -14,6 +14,11 @@ def main()
 	question_tag_id = dbh.get_tag('so-question-count');
 	dbh.insert_tagvalue(question_tag_id, so.question_count);
 
+	# insert the current question/answer id. Not sure if this counts for comments as well?
+	answer_tag_id = dbh.get_tag('so-answer-count');
+	dbh.insert_tagvalue(answer_tag_id, so.answer_count);
+	
+
 	# insert the count for each of the tags	
 	so.tag_counts.each do |curtag|
 		tag_id = dbh.get_tag("so-tag-#{curtag['name']}");
@@ -27,17 +32,29 @@ end
 class StackOverflow
     
     def initialize()
-		@question_url = 'http://stackoverflow.com/questions';
+		@question_url = 'http://stackoverflow.com/questions?sort=newest';
 		@tag_url = 'http://stackoverflow.com/tags';
+		@question_doc = nil
 	end
     
     def question_count()
-        doc = Nokogiri::HTML(open(@question_url));
+		if @question_doc == nil
+			self.get_recent_questions
+		end
 
-        e = doc.css('.module .summarycount')[0];
+        e = @question_doc.css('.module .summarycount')[0];
         question_count = Integer(e.content.gsub(/[^0-9]/, ''));
         return question_count;
     end
+
+	def answer_count()
+		if @question_doc == nil
+			self.get_recent_questions
+		end
+
+        e = @question_doc.css('.question-summary')[0];
+        return e['id'].split('-')[2].to_i;
+	end
 
 	def tag_counts()
 		doc = Nokogiri::HTML(open(@tag_url));
@@ -48,7 +65,10 @@ class StackOverflow
 
 		return tag_data
 	end
-    
+
+	def get_recent_questions()
+		@question_doc = Nokogiri::HTML(open(@question_url));
+	end    
 
 end
 
