@@ -1,17 +1,18 @@
 <%
+#
+# Nathan Reed, 29/04/2010
 
 require 'rubygems'
 require 'json'
 
 load 'lib/so-lib.rb'
 
-
 db = SoSql.real_connect();
 
 q_count = db.get_rate('so-question-count', 2);
 a_count = db.get_rate('so-answer-count', 2);
 
-#t = {:var1 => 'test', :var2 => 'ass'}
+count_data = [q_count, a_count];
 
 db.close;
 
@@ -23,6 +24,12 @@ db.close;
 <title>Stackoverflow Counter</title>
 
 <script src='js/mootools-1.2.4-core.js' type='text/javascript'></script>
+<script src='js/countdown.js' type='text/javascript'></script>
+
+<script type='text/javascript'>
+	var _rate_data = <%= count_data.to_json %>;
+</script>
+
 <link rel="stylesheet" href="css/default.css" type="text/css" media="screen, projection">
 
 </head>
@@ -31,10 +38,11 @@ db.close;
 <div id='so-body'>
 
 <div> Stackoverflow </div>
-<div> <%= q_count['count'].to_i %> Questions </div>
-<div> <%= q_count['rate'] %> </div>
-<div> <%= a_count['count'].to_i %> Answers </div>
-<div> <%= a_count['rate'] %> </div>
+<div id='so-question-count'> ... </div>
+<div id='so-answer-count'> ... </div>
+
+<!--<div> <%= q_count['rate'] %> </div>
+<div> <%= a_count['rate'] %> </div>-->
 
 </div>
 

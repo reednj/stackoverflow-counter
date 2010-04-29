@@ -47,7 +47,7 @@ class SoSql < EasySql
 		age = count_data[0]['age'].to_f;
 		rate = (count - count_data[look_back - 1]['tag_value'].to_f) / (count_data[look_back - 1]['age'].to_f - age);
 
-		return {'count' => count, 'age' => age, 'rate' => rate};
+		return {'tag_name' => tag_name, 'count' => count, 'age' => age, 'rate' => rate};
 
 	end
 
