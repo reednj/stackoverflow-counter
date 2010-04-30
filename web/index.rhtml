@@ -4,10 +4,14 @@
 
 $LOAD_PATH << './lib' << '../shared'
 
+begin
+	load './lib/so-db.rb'
+rescue LoadError
+	load '../shared/so-db.rb'
+end
+
 require 'rubygems'
 require 'json'
-
-load '../shared/so-db.rb'
 
 db = SoSql.real_connect();
 

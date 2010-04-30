@@ -1,7 +1,7 @@
 # Nathan Reed, 29/04/2010
 
+load 'so-config.rb'
 require 'mysql'
-
 
 class EasySql < Mysql
 
@@ -31,10 +31,10 @@ class SoSql < EasySql
 	
 	def self.real_connect()
 		
-		@db_server = 'localhost';
-		@db_name = 'stackoverflow_count';
-		@db_user = 'linkuser';
-		@db_pass = '';
+		@db_server = $DB_HOST;
+		@db_name = $DB_NAME;
+		@db_user = $DB_USER;
+		@db_pass = $DB_PASS;
 
 		super;		
 	end
