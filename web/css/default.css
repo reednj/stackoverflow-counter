@@ -2,7 +2,7 @@
  * Default CSS file. Sets up a blank slate for everything
  * else.
  *
- * Nathan Reed, 08JUN2008
+ * Nathan Reed, 30/04/2010
  */
 html, body, form {
 	margin: 0;
@@ -19,11 +19,6 @@ p, div, span, h1, h2, h3, h4 {
 .left  { float: left; }
 .right { float:right; }
 
-a {
-	color: #0099FF;
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
-}
+a {	color: #0099FF;	text-decoration: none;}
+a:hover { text-decoration: underline;}
+p {	padding-top: 1px; }
