@@ -66,6 +66,7 @@ var CounterElement = new Class({
 	}
 });
 
+/* from http://javascript.internet.com/text-effects/add-commas.html */
 window.addEvent('load', Number.implement({ format: function() {
 	number = '' + this;
 	if (number.length > 3) {
