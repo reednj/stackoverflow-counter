@@ -54,7 +54,7 @@ end
 		padding-left: 36px;
 		padding-bottom: 8px;
 
-		margin-top: 120px;
+		padding-top: 120px;
 		margin-bottom: 6px;
 
 		border-bottom: 3px dashed gray;
@@ -99,12 +99,37 @@ end
 		float: right;
 	}
 
+/*
+
+Sticky Footer by Ryan Fait
+http://ryanfait.com/
+
+*/
+	* {
+	margin: 0;
+	}
+	html, body {
+		height: 100%;
+	}
+	.wrapper {
+		min-height: 100%;
+		height: auto !important;
+		height: 100%;
+		margin: 0 auto -70px; 
+	}
+	.footer, .push {
+		height: 70px; 
+	}
+
+
 
 </style>
 
 </head>
 <body>
 
+
+<div class="wrapper">
 
 <div class='so-header'>
 	<div class='so-title'> stack<b>overflow</b>/counter </div>
@@ -134,12 +159,18 @@ end
 
 </div>
 
+<div class="push"></div>
+</div>
+
+<div class="footer">
+
 <div class='so-sub-title'>
 	<p>data updated from <a href='http://stackoverflow.com'>stackoverflow.com</a> every 15 minutes </p>
 	<p><a href='http://twitter.com/reednj'>Nathan Reed</a> (c) 2010 | <a href='http://popacular.com'>popacular.com</a></p>
 	<p>view the <a href='http://github.com/reednj/stackoverflow-counter'>source code</a> on <a href='http://github.com'>github</a></p>
 </div>
 
+</div>
 
 </body>
 </html>
