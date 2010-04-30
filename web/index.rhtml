@@ -2,15 +2,22 @@
 #
 # Nathan Reed, 29/04/2010
 
+$LOAD_PATH << './lib' << '../shared'
+
 require 'rubygems'
 require 'json'
 
-load 'lib/so-lib.rb'
+load '../shared/so-db.rb'
 
 db = SoSql.real_connect();
 
 q_count = db.get_rate('so-question-count', 4);
 a_count = db.get_rate('so-answer-count', 4);
+
+# the answer count is actuallt the combined question and answer count
+# so we need to subtract the question count to get the *actual* answer count
+a_count['count'] -= q_count['count'];
+a_count['rate'] -= q_count['rate'];
 
 count_data = [q_count, a_count];
 

@@ -1,18 +1,21 @@
 #!/usr/bin/ruby
 
+$LOAD_PATH << './lib' << '../shared'
+
 require 'rubygems';
 require 'nokogiri';
 require 'open-uri';
 require 'mysql';
 
-require '/var/www/dev/stackoverflow_count/scripts/lib/so-lib.rb';
+require 'so-db';
+require 'so-web';
+
+REQUEST_DELAY = 3;
 
 def main()
-	REQUEST_DELAY = 3;
 
     so = StackOverflow.new();
-    dbh =  SOsql.init();
-    dbh.easy_connect;
+    dbh =  SoSql.real_connect();
 
 	# insert the total question count
 	question_tag_id = dbh.get_tag('so-question-count');

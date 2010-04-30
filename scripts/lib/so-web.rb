@@ -1,6 +1,5 @@
 # Nathan Reed, 29/04/2010
 
-require 'mysql'
 
 class StackOverflow
     
@@ -93,63 +92,3 @@ class StackOverflow
 
 end
 
-class SOsql < Mysql
-
-    def easy_connect()
-        self.real_connect("localhost", "linkuser", "", "stackoverflow_count");
-    end
-
-    def insert_tagvalue(tag_id, tag_value, created_date = nil)
-        tag_id = Integer(tag_id);
-        tag_value = Float(tag_value);
-
-		if(created_date.nil?) 
-	        self.easy_query("insert ignore into TagValue (tag_id, tag_value) values (#{tag_id}, #{tag_value})");
-		else
-			self.easy_query("insert ignore into TagValue (tag_id, tag_value, created_date) values (#{tag_id}, #{tag_value}, '#{created_date}')");
-		end
-    end
-
-	def insert_tag(tag_name)
-		tag_name = self.escape_string(tag_name)
-		self.easy_query("insert ignore into Tag (tag_name) values ('#{tag_name}')");
-
-		return self.insert_id
-	end
-
-	# returns the tag_id.
-	# if the tag doesn't exist, it will be created.
-	def get_tag(tag_name)
-		tag_name = self.escape_string(tag_name)
-		tag_data = self.easy_query("select tag_id from Tag where tag_name = '#{tag_name}'");
-
-		if tag_data.empty?
-			tag_id = self.insert_tag(tag_name)
-		else
-			tag_id = tag_data[0]['tag_id'];
-		end
-
-		return tag_id;
-	end
-
-end
-
-class Mysql
-
-    def easy_query(query_string)
-        result = [];
-        res = self.query(query_string);
-
-        if res.nil?
-            return nil;
-        end
-
-        i=0; res.each_hash do |row| 
-            result[i] = row;
-            i += 1;
-        end
-
-        return result;
-    end
-
-end
