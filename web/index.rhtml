@@ -9,8 +9,8 @@ load 'lib/so-lib.rb'
 
 db = SoSql.real_connect();
 
-q_count = db.get_rate('so-question-count', 2);
-a_count = db.get_rate('so-answer-count', 2);
+q_count = db.get_rate('so-question-count', 4);
+a_count = db.get_rate('so-answer-count', 4);
 
 count_data = [q_count, a_count];
 
