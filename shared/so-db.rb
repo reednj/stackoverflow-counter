@@ -65,7 +65,7 @@ class SoSql < EasySql
 		from TagValue tv
 			inner join Tag t on t.tag_id = tv.tag_id
 		where tag_name = '#{tag_name}'
-		order by value_id desc 
+		order by created_date desc 
 		limit #{limit}");
 
 	end

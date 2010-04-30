@@ -13,13 +13,14 @@ db = SoSql.real_connect();
 
 q_count = db.get_rate('so-question-count', 4);
 a_count = db.get_rate('so-answer-count', 4);
+c_count = db.get_rate('so-comment-count', 4);
 
 # the answer count is actuallt the combined question and answer count
 # so we need to subtract the question count to get the *actual* answer count
 a_count['count'] -= q_count['count'];
 a_count['rate'] -= q_count['rate'];
 
-count_data = [q_count, a_count];
+count_data = [q_count, a_count, c_count];
 
 db.close;
 
@@ -47,6 +48,7 @@ db.close;
 <div> Stackoverflow </div>
 <div id='so-question-count'> ... </div>
 <div id='so-answer-count'> ... </div>
+<div id='so-comment-count'> ... </div>
 
 <!--<div> <%= q_count['rate'] %> </div>
 <div> <%= a_count['rate'] %> </div>-->
