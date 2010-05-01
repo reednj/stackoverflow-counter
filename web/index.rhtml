@@ -26,6 +26,13 @@ a_count['rate'] -= q_count['rate'];
 
 count_data = [q_count, a_count, c_count];
 
+# maybe the web server and the server that gathered the so data
+# have slightly different clocks. We apply this offset to make them
+# the same.
+count_data.each do |ci|
+	ci['age'] += $TIME_OFFSET;
+end
+
 db.close;
 
 def to_hourly(rate)
@@ -37,7 +44,7 @@ end
 <!doctype html public "-//w3c//dtd html 4.0 strict//en">
 <html>
 <head>
-<title>stackoverflow counter</title>
+<title> stackoverflow counter </title>
 
 <meta http-equiv="REFRESH" content="300">
 

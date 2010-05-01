@@ -11,3 +11,5 @@ if $IS_PROD
 	ENV['GEM_HOME'] = '/home/reednj/.gem/ruby/1.8'
 	ENV['GEM_PATH'] = '$GEM_HOME:/usr/lib/ruby/gems/1.8'
 end
+
+$TIME_OFFSET = 0
