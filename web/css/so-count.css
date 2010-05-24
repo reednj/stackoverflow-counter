@@ -60,6 +60,15 @@
 	float: right;
 }
 
+.so-tag-list {
+	float: right; 
+	margin-top: 22px; 
+	padding-right:16px;
+	
+	font-size: 14pt;
+	color: gray;
+}
+
 /*
 
 Sticky Footer by Ryan Fait

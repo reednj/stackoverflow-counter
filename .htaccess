@@ -9,4 +9,4 @@ DirectoryIndex index.rhtml index.html
 RewriteEngine On
 RewriteBase /dev/stackoverflow_count/web/
 
-RewriteRule tag/([a-z]+)$ index.rhtml?tag=$1 [NC]
+RewriteRule tag/(.+)$ index.rhtml?tag=$1 [NC]

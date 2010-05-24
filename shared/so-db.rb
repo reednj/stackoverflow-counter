@@ -39,9 +39,9 @@ class SoSql < EasySql
 		super;		
 	end
 
-	def get_rate(tag_name, look_back = 2)
+	def get_rate(tag_name)
 
-		count_data = self.get_counts(tag_name, look_back);
+		count_data = self.get_prev(tag_name);
 		
 		if count_data.nil? or count_data.size == 0
 			return {'tag_name' => tag_name, 'count' => 0, 'age' => 0, 'rate' => 0}
@@ -49,7 +49,7 @@ class SoSql < EasySql
 	
 		count = count_data[0]['tag_value'].to_f;
 		age = count_data[0]['age'].to_f;
-		rate = (count - count_data[look_back - 1]['tag_value'].to_f) / (count_data[look_back - 1]['age'].to_f - age);
+		rate = (count - count_data[1]['tag_value'].to_f) / (count_data[1]['age'].to_f - age);
 
 		return {'tag_name' => tag_name, 'count' => count, 'age' => age, 'rate' => rate};
 
@@ -84,12 +84,35 @@ class SoSql < EasySql
 		limit #{limit}");
 
 	end
-
+	
+	def get_prev(tag_id)
+		# if we've been given a tagname, then convert it to an id
+		if tag_id.kind_of?(String)
+			tag_id = self.get_tag(tag_id);
+		end
+	
+		current_data = self.get_counts_by_id(tag_id, 1);
+		prev_data = self.easy_query("select 
+			value_id, 
+			tag_id, tag_value, 
+			created_date, 
+			unix_timestamp() - unix_timestamp(created_date) as age 
+		from TagValue 
+		where 
+			tag_id = '#{tag_id}' and
+			value_id < '#{current_data[0]["value_id"]}' and
+			tag_value != '#{current_data[0]["tag_value"]}'
+		order by value_id 
+		desc limit 1");
+		
+		return [current_data[0], prev_data[0]];
+	end
+	
 	def get_counts_by_id(tag_id, limit = 50)
-		tag_id = self.escape_string(tag_id);
+		tag_id = Integer(tag_id);
 		limit  = Integer(limit);
 
-		return self.easy_query("select value_id, tag_id, .tag_value, created_date, unix_timestamp() - unix_timestamp(created_date) as age from TagValue where tag_id = '#{tag_id}' order by value_id desc limit #{limit}");
+		return self.easy_query("select value_id, tag_id, tag_value, created_date, unix_timestamp() - unix_timestamp(created_date) as age from TagValue where tag_id = '#{tag_id}' order by value_id desc limit #{limit}");
 	end
 
 	def get_tags()
@@ -108,9 +131,8 @@ class SoSql < EasySql
     end
     
     def get_tagvalue(tag_name)
-    
     	tag_id = self.get_tag(tag_name);
-    	return self.easy_query("select value_id, tag_id, tag_value, unix_timestamp() - unix_timestamp(created_date) as age, created_date from TagValue where tag_id = '#{tag_id}' order by value_id desc limit 1");
+    	return get_counts_by_id(tag_id, 1)
     end
 
 	def insert_tag(tag_name)
