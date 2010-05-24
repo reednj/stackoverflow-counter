@@ -1,94 +1,78 @@
 # Nathan Reed, 29/04/2010
 
+require 'json'
+require 'zlib' 
+require 'open-uri'
+
+# I would have thought that open-uri would inflate gzipped responses automatically, but
+# apparently not.
+class StringIO
+	def inflate()
+		return Zlib::GzipReader.new(self).read
+	end
+end
 
 class StackOverflow
     
     def initialize()
-		@MIN_COMMENTS = 3;
-		@MAX_QUESTIONS = 3;
-
-		@question_url_base = 'http://stackoverflow.com/questions/';
-		@question_url = 'http://stackoverflow.com/questions?sort=newest';
-		@tag_url = 'http://stackoverflow.com/tags';
-		@question_doc = nil
+		
+		@api_base_url = 'http://api.stackoverflow.com/0.8/';
+		@stats_cmd = 'stats';
+		@tags_cmd = 'tags'
+		
+		@stats_doc = nil;
+		@tags_doc = nil;
 	end
     
-    def question_count()
-		if @question_doc == nil
-			self.get_recent_questions
+    def question_rate()
+        if @stats_doc == nil
+			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
 		end
 
-        e = @question_doc.css('.module .summarycount')[0];
-        question_count = Integer(e.content.gsub(/[^0-9]/, ''));
-        return question_count;
+        return @stats_doc['statistics'][0]['questions_per_minute'];
+    end
+    
+    def answer_rate()
+    	if @stats_doc == nil
+			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
+		end
+
+        return @stats_doc['statistics'][0]['answers_per_minute'];
+    end
+    
+    def question_count()
+		if @stats_doc == nil
+			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
+		end
+
+        return @stats_doc['statistics'][0]['total_questions'];
     end
 
 	def answer_count()
-		if @question_doc == nil
-			self.get_recent_questions
+		if @stats_doc == nil
+			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
 		end
 
-        e = @question_doc.css('.question-summary')[0];
-        return e['id'].split('-')[2].to_i;
+        return @stats_doc['statistics'][0]['total_answers'];
 	end
 
-	def tag_counts()
-		doc = Nokogiri::HTML(open(@tag_url));
-
-		tag_data = doc.css('.post-tag').map do |curtag|
-			{'name' => curtag.content, 'count' => curtag.next.content.gsub(/[^0-9]/, '').to_i};
-		end
-
-		return tag_data
-	end
-
-	def get_recent_questions()
-		@question_doc = Nokogiri::HTML(open(@question_url));
-	end
-
-	# opens a bunch of questions until it has enough comments
-	# or has gone through enough pages to give up.
 	def get_comments()
-		question_data = self.get_question_list
-		comment_data = [];
-
-		question_data[0, @MAX_QUESTIONS].each do |question|
-			comment_data += self.get_question_comments(question['id']);
-			if comment_data.size >= @MIN_COMMENTS
-				break
-			end
-
-			sleep(5);
+		if @stats_doc == nil
+			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
 		end
 
-		return comment_data;
+        return @stats_doc['statistics'][0]['total_comments'];
 	end
-
-	def get_question_comments(question_id)
-		question_url = @question_url_base + question_id.to_s;
-
-		doc = Nokogiri::HTML(open(question_url));
-		comments = doc.css('.comment')
-
-		return comments.map do |c|
-			{'id' => c['id'].gsub(/[^0-9]/, '').to_i, 'time_utc' => c.css('.comment-date span').first['title']}
+	
+	def tag_counts()
+		if @tags_doc == nil
+			@tags_doc = JSON.parse(open(@api_base_url + @tags_cmd).inflate)
 		end
 
-	end
-
-	# return a list of question ids, sorted by the number of views they have
-	def get_question_list()
-		doc = Nokogiri::HTML(open('http://stackoverflow.com/questions?page=3&sort=newest'));
-		question_list = doc.css('.question-summary');
-
-		# get a list of all question ids, and the number of views
-		question_data = question_list.map do |q|
-			{'id' => q['id'].gsub(/[^0-9]/, '').to_i, 'views' => q.css('.views')[0].content.gsub(/[^0-9]/, '').to_i};
-		end
-
-		return question_data.sort_by {|a| -a['views']};
-
+		return @tags_doc['tags']
 	end
 
 end
+
+
 

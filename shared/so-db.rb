@@ -50,6 +50,17 @@ class SoSql < EasySql
 		return {'tag_name' => tag_name, 'count' => count, 'age' => age, 'rate' => rate};
 
 	end
+	
+	def get_tag_rate(base_tag_name)
+		count_data = self.get_tagvalue(base_tag_name+'-count');
+		rate_data = self.get_tagvalue(base_tag_name+'-rate');
+		
+		count = count_data[0]['tag_value'].to_f;
+		age = count_data[0]['age'].to_f;
+		rate = rate_data[0]['tag_value'].to_f / 60;
+
+		return {'tag_name' => base_tag_name+'-count', 'count' => count, 'age' => age, 'rate' => rate};
+	end
 
 	def get_counts(tag_name, limit = 50)
 		tag_name = self.escape_string(tag_name);
@@ -90,6 +101,12 @@ class SoSql < EasySql
 		else
 			self.easy_query("insert ignore into TagValue (tag_id, tag_value, created_date) values (#{tag_id}, #{tag_value}, '#{created_date}')");
 		end
+    end
+    
+    def get_tagvalue(tag_name)
+    
+    	tag_id = self.get_tag(tag_name);
+    	return self.easy_query("select value_id, tag_id, tag_value, unix_timestamp() - unix_timestamp(created_date) as age, created_date from TagValue where tag_id = '#{tag_id}' order by value_id desc limit 1");
     end
 
 	def insert_tag(tag_name)
