@@ -42,6 +42,10 @@ class SoSql < EasySql
 	def get_rate(tag_name, look_back = 2)
 
 		count_data = self.get_counts(tag_name, look_back);
+		
+		if count_data.nil? or count_data.size == 0
+			return {'tag_name' => tag_name, 'count' => 0, 'age' => 0, 'rate' => 0}
+		end
 	
 		count = count_data[0]['tag_value'].to_f;
 		age = count_data[0]['age'].to_f;

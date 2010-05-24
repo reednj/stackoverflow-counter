@@ -6,6 +6,7 @@ $DB_USER = 'linkuser'
 $DB_PASS = ''
 
 $IS_PROD = false;
+$ROOT_PATH = '/dev/stackoverflow_count/web/';
 
 if $IS_PROD
 	ENV['GEM_HOME'] = '/home/reednj/.gem/ruby/1.8'
