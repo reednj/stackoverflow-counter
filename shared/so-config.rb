@@ -16,4 +16,4 @@ end
 
 $TIME_OFFSET = 0
 
-$SITE_TAG_PREFIX = 'so' # tagname prefix in the database
+$SITE_TAG_PREFIX = 'sf' # tagname prefix in the database

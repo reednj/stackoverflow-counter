@@ -16,21 +16,22 @@ require 'cgi'
 
 db = SoSql.real_connect();
 
-tag_list = ['c#','java','.net','php','asp.net','javascript','c++','jquery','iphone','python','sql','mysql','html','sql-server','ruby-on-rails','c','asp.net-mvc','css','wpf','objective-c','windows','xml','ruby','database','best-practices','vb.net','android','visual-studio'];
+all_tag = 'all';
+popular_tags = [all_tag, 'c#','java','.net','php','asp.net','javascript','c++','jquery','iphone','python','sql','mysql','html','sql-server','ruby-on-rails','c','asp.net-mvc','css','wpf','objective-c','windows','xml','ruby','database','best-practices','vb.net','android','visual-studio'];
 
 query = CGI.new
 so_tag = query.params['tag'][0];
-q_tag_name = 'so-question-count'
+so_tag = all_tag if so_tag.nil?
 
-if so_tag.nil? 
-	q_count = db.get_tag_rate('so-question');
-	a_count = db.get_tag_rate('so-answer');
-	c_count = db.get_rate('so-comment-count');
+if so_tag == all_tag 
+	q_count = db.get_rate_from_rate("#{$SITE_TAG_PREFIX}-question");
+	a_count = db.get_rate_from_rate("#{$SITE_TAG_PREFIX}-answer");
+	c_count = db.get_rate_from_count("#{$SITE_TAG_PREFIX}-comment-count");
 	
 	count_data = [q_count, a_count, c_count];
 else 
-	q_tag_name = 'so-tag-' + so_tag
-	q_count = db.get_rate(q_tag_name);
+	question_count_tag = "#{$SITE_TAG_PREFIX}-tag-#{so_tag}"
+	q_count = db.get_rate_from_count(question_count_tag);
 	count_data = [q_count];
 end
 
@@ -87,7 +88,7 @@ end
 <div class="wrapper">
 
 <div class='so-header'>
-	<% if so_tag.nil? %>
+	<% if so_tag == all_tag %>
 	<div class='so-title left'> analytics<b>overflow</b> </div>
 	<% else %>
 	<div class='so-title left'> analytics<b>overflow</b>/<span style='color:gray'><%= so_tag; %></span></div>
@@ -96,16 +97,12 @@ end
 	<div class='so-tag-list' style=''>
 		view by tag: 
 		
-		<% if so_tag.nil? %>
-		<span>all</span>
-		<% else %>
-		<span><a href='<%= $ROOT_PATH %>'>all</a></span>
-		<% end %>
-		
 		<% 
-		tag_list[0..5].each do |cur_tag| 
+		popular_tags[0..5].each do |cur_tag| 
 			if cur_tag == so_tag
 				print "<span> #{cur_tag} </span>";
+			elsif cur_tag == all_tag
+				print "<span><a href='#{$ROOT_PATH}'> #{cur_tag} </a></span>";
 			else 
 				print "<span><a href='?tag=#{CGI.escape(cur_tag)}'> #{cur_tag} </a></span>";
 			end
@@ -122,25 +119,25 @@ end
 
 <div style='text-align: right; margin-right: 16px'>
 	
-	<% if so_tag.nil? %>
+	<% if so_tag == all_tag %>
 	<div class='so-counter-block'>
-		<div id='so-comment-count' class='so-counter'> ... </div>
+		<div id='<%= $SITE_TAG_PREFIX %>-comment-count' class='so-counter'> ... </div>
 		<div class='so-label'> comments <span class='so-rate'><%= to_hourly(c_count) %></span> </div>
 	</div>
 
 	<div class='so-counter-block'>
-		<div id='so-answer-count' class='so-counter'> ... </div>
+		<div id='<%= $SITE_TAG_PREFIX %>-answer-count' class='so-counter'> ... </div>
 		<div class='so-label'> answers <span class='so-rate'><%= to_hourly(a_count) %></span> </div>
 	</div>
 	
 	<div class='so-counter-block'>
-		<div id='<%= q_tag_name %>' class='so-counter'> ... </div>
+		<div id='<%= $SITE_TAG_PREFIX %>-question-count' class='so-counter'> ... </div>
 		<div class='so-label'> questions <span class='so-rate'><%= to_hourly(q_count) %></span> </div>
 	</div>
 	<% else %>
 	
 	<div class='so-counter-block'>
-		<div id='<%= q_tag_name %>' class='so-counter'> ... </div>
+		<div id='<%= question_count_tag %>' class='so-counter'> ... </div>
 		<div class='so-label'> questions <span class='so-rate'><%= to_daily(q_count) %></span> </div>
 	</div>
 	

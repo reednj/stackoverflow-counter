@@ -55,7 +55,9 @@ var CounterElement = new Class({
 
 	update_display: function() {
 		this.update_number();
-		this.element.innerHTML = this.number.round().format();
+		if($defined(this.element)) {
+			this.element.innerHTML = this.number.round().format();
+		}
 	},
 
 	update_number: function() {
