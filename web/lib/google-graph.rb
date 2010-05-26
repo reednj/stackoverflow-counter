@@ -1,8 +1,8 @@
 
 class Array
 
-	def simple_encode
-		max_val = self.max
+	def simple_encode(max_buffer = 1.1)
+		max_val = self.max * max_buffer
 		result = []
 
 		result = self.map do |value|
@@ -11,6 +11,7 @@ class Array
 		
 		return result.join;
 	end
+
 end
 
 class Fixnum
@@ -25,18 +26,13 @@ class GoogleChart
 	def initialize(params = nil)
 		@base_url = 'http://chart.apis.google.com/chart'
 		
-		@height = nil;
-		@width = nil;
-		@labels = nil;
-		@title = nil;
-		@spacing = nil;
-		
 		if !params.nil?
 			@height = params[:height];
 			@width = params[:width];
 			@labels = params[:labels];
 			@titles = params[:titles];
 			@spacing = params[:spacing];
+			@color = params[:color];
 		end
 	end
 	
@@ -48,7 +44,7 @@ class GoogleChart
 		url_params << self.axis_s(data);
 		
 		if @height.nil? or @width.nil?
-			url_params << self.size_s(400, 200);
+			url_params << self.size_s(200, 75);
 		else 
 			url_params << self.size_s(@width, @height);
 		end
@@ -56,6 +52,7 @@ class GoogleChart
 		url_params << self.labels_s(@labels) if !@labels.nil?;
 		url_params << self.title_s(@titles) if !@titles.nil?;
 		url_params << self.spacing_s(@spacing) if !@spacing.nil?;
+		url_params << self.colors_s(@spacing) if !@color.nil?;
 
 		return "#{@base_url}?#{url_params.join('&')}"
 	end
@@ -96,12 +93,10 @@ class GoogleChart
 	end
 	
 	def axis_s(data_array)
-		label_count = 3
-		min_val = 0
-		max_val = data_array.max
-		step = ((max_val - min_val) / label_count).round
-
-		return "chxr=1,#{min_val},#{max_val},#{step}"
+		min_val = 0.001
+		max_val = data_array.max * 1.1
+		
+		return "chxr=1,#{min_val},#{max_val}"
 	end
 	
 

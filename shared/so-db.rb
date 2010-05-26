@@ -2,6 +2,33 @@
 
 load 'so-config.rb'
 require 'mysql'
+require 'date'
+
+class Array
+
+	def every(n)
+		return select {|x| index(x) % n == 0}
+	end
+	
+	def sample(n)
+		return self.every((self.size / n).floor)
+	end
+end
+
+class Fixnum
+	def ordinalize
+		if (11..13).include?(self % 100)
+			"#{self}th"
+		else
+			case self % 10
+				when 1; "#{self}st"
+				when 2; "#{self}nd"
+				when 3; "#{self}rd"
+				else    "#{self}th"
+			end
+		end
+	end
+end
 
 class EasySql < Mysql
 
@@ -39,6 +66,45 @@ class SoSql < EasySql
 		super;		
 	end
 
+	def daily_graph_values(tag_id, label_count = 3)
+		if tag_id.kind_of?(String)
+			tag_id = self.get_tag(tag_id);
+		end
+		
+		daily_data = self.daily_values(tag_id);
+		
+		data_values = daily_data.map do |item|
+			item['max_value'].to_i - item['min_value'].to_i;
+		end
+		
+		label_values = daily_data.map do |item|
+			d = Date.parse(item['value_date']);
+			d.day.ordinalize
+		end
+		
+		return {'data' => data_values.reverse, 'labels' => label_values.reverse.sample(label_count)}
+	end
+	
+	def daily_values(tag_id, max_records = 14)
+		
+		tag_id = Integer(tag_id)
+		max_records = Integer(max_records)
+		
+		data = self.easy_query("
+		select
+			tag_id,
+			date(created_date) as value_date,
+			min(tag_value) as min_value,
+			max(tag_value) as max_value
+		from TagValue
+		where tag_id = #{tag_id} and date(created_date) != date(now())
+		group by date(created_date)
+		order by date(created_date) desc
+		limit #{max_records}");
+		
+		return data;
+	end
+	
 	# get the rate data by looking at two values of a count tag
 	def get_rate_from_count(tag_name)
 

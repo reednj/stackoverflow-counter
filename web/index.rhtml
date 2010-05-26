@@ -10,6 +10,7 @@ rescue LoadError
 	load '../shared/so-db.rb'
 end
 
+load './lib/google-graph.rb'
 require 'rubygems'
 require 'json'
 require 'cgi'
@@ -30,9 +31,14 @@ if so_tag == all_tag
 	
 	count_data = [q_count, a_count, c_count];
 else 
+	
 	question_count_tag = "#{$SITE_TAG_PREFIX}-tag-#{so_tag}"
 	q_count = db.get_rate_from_count(question_count_tag);
 	count_data = [q_count];
+	
+	graph_data = db.daily_graph_values(question_count_tag);
+	graph_url = GoogleChart.new({:spacing => 60, :labels => graph_data['labels']}).generate(graph_data['data'])
+	
 end
 
 # maybe the web server and the server that gathered the so data
@@ -65,6 +71,7 @@ end
 <!doctype html public "-//w3c//dtd html 4.0 strict//en">
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 <title> analyticsoverflow - tracking the activity on stackoverflow.com </title>
 
 <meta http-equiv="REFRESH" content="300">
@@ -135,10 +142,14 @@ end
 		<div class='so-label'> questions <span class='so-rate'><%= to_hourly(q_count) %></span> </div>
 	</div>
 	<% else %>
-	
-	<div class='so-counter-block'>
+
+	<div class='so-counter-block right'>
 		<div id='<%= question_count_tag %>' class='so-counter'> ... </div>
 		<div class='so-label'> questions <span class='so-rate'><%= to_daily(q_count) %></span> </div>
+	</div>
+	
+	<div class='so-graph right' style='padding-top: 16px'>
+		<img src='<%= graph_url %>' title="'<%= so_tag%>' questions per day" />
 	</div>
 	
 	<% end %>
