@@ -8,7 +8,7 @@ cp -R ../shared/*.rb ~/tmpcpy/lib/
 # remove the config file, and other files we don't want to copy
 rm ~/tmpcpy/lib/so-config.rb
 
-scp -r ~/tmpcpy/* reednj@popacular.com:~/popacular.com/stackoverflow/
+scp -r ~/tmpcpy/* reednj@popacular.com:~/popacular.com/analyticsoverflow/
 
 # clean temp directory
 rm -rf ~/tmpcpy/*

@@ -12,6 +12,7 @@ end
 
 require 'rubygems'
 require 'json'
+require 'cgi'
 
 db = SoSql.real_connect();
 
@@ -63,7 +64,7 @@ end
 <!doctype html public "-//w3c//dtd html 4.0 strict//en">
 <html>
 <head>
-<title> stackoverflow counter </title>
+<title> analyticsoverflow - tracking the activity on stackoverflow.com </title>
 
 <meta http-equiv="REFRESH" content="300">
 
@@ -87,9 +88,9 @@ end
 
 <div class='so-header'>
 	<% if so_tag.nil? %>
-	<div class='so-title left'> stack<b>overflow</b>/counter </div>
+	<div class='so-title left'> analytics<b>overflow</b> </div>
 	<% else %>
-	<div class='so-title left'> stack<b>overflow</b>/counter/<%= so_tag; %> </div>
+	<div class='so-title left'> analytics<b>overflow</b>/<span style='color:gray'><%= so_tag; %></span></div>
 	<% end %>
 	
 	<div class='so-tag-list' style=''>
@@ -106,7 +107,7 @@ end
 			if cur_tag == so_tag
 				print "<span> #{cur_tag} </span>";
 			else 
-				print "<span><a href='#{$ROOT_PATH}/tag/#{CGI.escape(cur_tag)}'> #{cur_tag} </a></span>";
+				print "<span><a href='?tag=#{CGI.escape(cur_tag)}'> #{cur_tag} </a></span>";
 			end
 		end	
 		%>
