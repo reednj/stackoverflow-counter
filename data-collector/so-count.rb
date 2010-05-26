@@ -18,29 +18,23 @@ def main()
     dbh =  SoSql.real_connect();
 
 	# insert the total question count and rate
-	question_tag_id = dbh.get_tag('so-question-count');
-	question_rate_tag_id = dbh.get_tag('so-question-rate');
-	dbh.insert_tagvalue(question_tag_id, so.question_count);
-	dbh.insert_tagvalue(question_rate_tag_id, so.question_rate);
+	dbh.insert_tagvalue("#{$SITE_TAG_PREFIX}-question-count", so.question_count);
+	dbh.insert_tagvalue("#{$SITE_TAG_PREFIX}-question-rate", so.question_rate);
 	puts 'question count+rate added'
 
 	# insert the current question/answer id. Not sure if this counts for comments as well?
-	answer_tag_id = dbh.get_tag('so-answer-count');
-	answer_rate_tag_id = dbh.get_tag('so-answer-rate');
-	dbh.insert_tagvalue(answer_tag_id, so.answer_count);
-	dbh.insert_tagvalue(answer_rate_tag_id, so.answer_rate);
+	dbh.insert_tagvalue("#{$SITE_TAG_PREFIX}-answer-count", so.answer_count);
+	dbh.insert_tagvalue("#{$SITE_TAG_PREFIX}-answer-rate", so.answer_rate);
 	puts 'answer count+rate added'
 
 	# insert the comment count
-	comment_tag = dbh.get_tag('so-comment-count');
-	dbh.insert_tagvalue(comment_tag, so.get_comments);
+	dbh.insert_tagvalue("#{$SITE_TAG_PREFIX}-comment-count", so.comments_count);
 	puts "comment count added";
 
 	# insert the count for each of the tags	
 	sleep(REQUEST_DELAY);
 	so.tag_counts.each do |curtag|
-		tag_id = dbh.get_tag("so-tag-#{curtag['name']}");
-		dbh.insert_tagvalue(tag_id, curtag['count']);
+		dbh.insert_tagvalue("#{$SITE_TAG_PREFIX}-tag-#{curtag['name']}", curtag['count']);
 	end
 	puts 'question counts added (grouped by tag)'
     

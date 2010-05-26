@@ -14,62 +14,61 @@ end
 
 class StackOverflow
     
-    def initialize()
+    def initialize(api_url = 'http://api.stackoverflow.com/0.8/')
 		
-		@api_base_url = 'http://api.stackoverflow.com/0.8/';
+		@api_base_url = api_url;
 		@stats_cmd = 'stats';
-		@tags_cmd = 'tags'
+		@tags_cmd = 'tags';
 		
+		# save the returned docs.
 		@stats_doc = nil;
 		@tags_doc = nil;
 	end
     
     def question_rate()
-        if @stats_doc == nil
-			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
-		end
-
-        return @stats_doc['statistics'][0]['questions_per_minute'];
+    	stats_data = self.get_stats();
+        return stats_data['statistics'][0]['questions_per_minute'];
     end
     
     def answer_rate()
-    	if @stats_doc == nil
-			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
-		end
-
-        return @stats_doc['statistics'][0]['answers_per_minute'];
+    	stats_data = self.get_stats();
+        return stats_data['statistics'][0]['answers_per_minute'];
     end
     
     def question_count()
-		if @stats_doc == nil
-			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
-		end
-
-        return @stats_doc['statistics'][0]['total_questions'];
+    	stats_data = self.get_stats();
+        return stats_data['statistics'][0]['total_questions'];
     end
 
 	def answer_count()
-		if @stats_doc == nil
-			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
-		end
-
-        return @stats_doc['statistics'][0]['total_answers'];
+    	stats_data = self.get_stats();
+        return stats_data['statistics'][0]['total_answers'];
 	end
 
-	def get_comments()
-		if @stats_doc == nil
-			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
-		end
-
-        return @stats_doc['statistics'][0]['total_comments'];
+	def comments_count()
+    	stats_data = self.get_stats();
+        return stats_data['statistics'][0]['total_comments'];
 	end
 	
 	def tag_counts()
+    	tags_data = self.get_tags();
+		return tags_data['tags'];
+	end
+	
+	def get_stats()
+		if @stats_doc == nil
+			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
+		end
+		
+		return @stats_doc;
+	end
+	
+	def get_tags()
 		if @tags_doc == nil
 			@tags_doc = JSON.parse(open(@api_base_url + @tags_cmd).inflate)
 		end
-
-		return @tags_doc['tags']
+		
+		return @tags_doc;
 	end
 
 end

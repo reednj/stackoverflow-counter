@@ -39,7 +39,7 @@ class SoSql < EasySql
 		super;		
 	end
 
-	def get_rate(tag_name)
+	def get_rate_from_count(tag_name)
 
 		count_data = self.get_prev(tag_name);
 		
@@ -55,7 +55,7 @@ class SoSql < EasySql
 
 	end
 	
-	def get_tag_rate(base_tag_name)
+	def get_rate_from_rate(base_tag_name)
 		count_data = self.get_tagvalue(base_tag_name+'-count');
 		rate_data = self.get_tagvalue(base_tag_name+'-rate');
 		
@@ -108,7 +108,15 @@ class SoSql < EasySql
 		return [current_data[0], prev_data[0]];
 	end
 	
+	def get_tagvalue(tag_name, limit = 1)
+    	return get_counts_by_id(tag_name, limit)
+    end
+    
 	def get_counts_by_id(tag_id, limit = 50)
+	    if tag_id.kind_of?(String)
+			tag_id = self.get_tag(tag_id);
+		end
+		
 		tag_id = Integer(tag_id);
 		limit  = Integer(limit);
 
@@ -119,20 +127,16 @@ class SoSql < EasySql
 		return self.easy_query("select tag_id, tag_name from Tags limit 200");
 	end
 
-    def insert_tagvalue(tag_id, tag_value, created_date = nil)
+    def insert_tagvalue(tag_id, tag_value)
+    	if tag_id.kind_of?(String)
+			tag_id = self.get_tag(tag_id);
+		end
+    
         tag_id = Integer(tag_id);
         tag_value = Float(tag_value);
 
-		if(created_date.nil?) 
-	        self.easy_query("insert ignore into TagValue (tag_id, tag_value) values (#{tag_id}, #{tag_value})");
-		else
-			self.easy_query("insert ignore into TagValue (tag_id, tag_value, created_date) values (#{tag_id}, #{tag_value}, '#{created_date}')");
-		end
-    end
-    
-    def get_tagvalue(tag_name)
-    	tag_id = self.get_tag(tag_name);
-    	return get_counts_by_id(tag_id, 1)
+        self.easy_query("insert ignore into TagValue (tag_id, tag_value) values (#{tag_id}, #{tag_value})");
+		
     end
 
 	def insert_tag(tag_name)
@@ -144,11 +148,12 @@ class SoSql < EasySql
 
 	# returns the tag_id.
 	# if the tag doesn't exist, it will be created.
-	def get_tag(tag_name)
+	def get_tag(tag_name, create_tag = true)
+		tag_id = nil
 		tag_name = self.escape_string(tag_name)
 		tag_data = self.easy_query("select tag_id from Tag where tag_name = '#{tag_name}'");
 
-		if tag_data.empty?
+		if tag_data.empty? and create_tag == true
 			tag_id = self.insert_tag(tag_name)
 		else
 			tag_id = tag_data[0]['tag_id'];

@@ -9,8 +9,11 @@ $IS_PROD = false;
 $ROOT_PATH = '/dev/stackoverflow_count/web/';
 
 if $IS_PROD
+	# this is needed to make the app run on dreamhost... not really sure why
 	ENV['GEM_HOME'] = '/home/reednj/.gem/ruby/1.8'
 	ENV['GEM_PATH'] = '$GEM_HOME:/usr/lib/ruby/gems/1.8'
 end
 
 $TIME_OFFSET = 0
+
+$SITE_TAG_PREFIX = 'so' # tagname prefix in the database
