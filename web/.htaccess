@@ -6,6 +6,10 @@ Options -Indexes
 Options -Multiviews
 DirectoryIndex index.rhtml index.html
 
+#AddHandler rubypage .rhtml
+#Action rubypage /analyticsoverflow/eruby.cgi
+
+
 RewriteEngine On
 RewriteBase /dev/stackoverflow_count/web/
 
