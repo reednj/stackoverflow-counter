@@ -2,7 +2,7 @@
 class Array
 
 	def simple_encode(max_buffer = 1.1)
-		max_val = self.max * max_buffer
+		max_val = self.max * max_buffer if !self.empty?
 		result = []
 
 		result = self.map do |value|
@@ -37,6 +37,8 @@ class GoogleChart
 	end
 	
 	def generate(data)
+		return nil if data.nil? or data.empty?
+	
 		url_params = ['chxp=0,0', 'chxt=x,y'];
 		
 		url_params << self.type_s('Bar');

@@ -68,7 +68,8 @@ class SoSql < EasySql
 
 	def daily_graph_values(tag_id, label_count = 3)
 		if tag_id.kind_of?(String)
-			tag_id = self.get_tag(tag_id);
+			tag_id = self.get_tag(tag_id, false);
+			return {'data' => nil, 'labels' => nil} if tag_id.nil?
 		end
 		
 		daily_data = self.daily_values(tag_id);
@@ -147,7 +148,8 @@ class SoSql < EasySql
 	def get_tagvalue_prev(tag_id)
 		# if we've been given a tagname, then convert it to an id
 		if tag_id.kind_of?(String)
-			tag_id = self.get_tag(tag_id);
+			tag_id = self.get_tag(tag_id, false);
+			return nil if tag_id.nil?
 		end
 
 		current_data = self.get_tagvalue(tag_id, 1);
@@ -178,7 +180,8 @@ class SoSql < EasySql
     
 	def get_tagvalue(tag_id, limit = 1)
 	    if tag_id.kind_of?(String)
-			tag_id = self.get_tag(tag_id);
+			tag_id = self.get_tag(tag_id, false);
+			return nil if tag_id.nil?
 		end
 		
 		tag_id = Integer(tag_id);
@@ -206,8 +209,12 @@ class SoSql < EasySql
 		tag_name = self.escape_string(tag_name)
 		tag_data = self.easy_query("select tag_id from Tag where tag_name = '#{tag_name}'");
 
-		if tag_data.empty? and create_tag == true
-			tag_id = self.insert_tag(tag_name)
+		if tag_data.empty?
+			if create_tag == true
+				tag_id = self.insert_tag(tag_name)
+			else
+				return nil
+			end
 		else
 			tag_id = tag_data[0]['tag_id'];
 		end

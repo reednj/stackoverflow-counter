@@ -26,17 +26,21 @@ popular_tags = [all_tag, 'c#','java','.net','php','asp.net','javascript','c++','
 query = CGI.new
 so_tag = query.params['tag'][0];
 so_tag = all_tag if so_tag.nil?
+so_tag_display = so_tag # this appears after the '/' in the title
 
 if so_tag == all_tag 
+	# its the front page. Get the three main counters.
 	q_count = db.get_rate_from_rate("#{$SITE_TAG_PREFIX}-question");
 	a_count = db.get_rate_from_rate("#{$SITE_TAG_PREFIX}-answer");
 	c_count = db.get_rate_from_count("#{$SITE_TAG_PREFIX}-comment-count");
 	
 	count_data = [q_count, a_count, c_count];
 else 
+	# is this one of the main 3 tags? they get treated differently...
 	if ['question', 'answer', 'comment'].include?(so_tag)
 		question_count_tag = "#{$SITE_TAG_PREFIX}-#{so_tag}-count"
 		tag_type = so_tag + 's'
+		so_tag_display = so_tag + 's'
 	else	
 		question_count_tag = "#{$SITE_TAG_PREFIX}-tag-#{so_tag}"
 		tag_type = 'questions'
@@ -47,6 +51,7 @@ else
 
 	graph_data = db.daily_graph_values(question_count_tag);
 	graph_url = GoogleChart.new({:spacing => 20, :labels => graph_data['labels'], :color => '5FC5FF'}).generate(graph_data['data'])
+	graph_url = './imgs/blank.png' if graph_url.nil?
 	
 end
 
@@ -132,7 +137,7 @@ end
 <div class="wrapper">
 
 <div class='so-header'>
-	<div class='so-title left'><a href='./'>analytics<b>overflow</b></a><% print "/<span style='color:gray'>#{so_tag}</span>" if so_tag != all_tag %> </div>
+	<div class='so-title left'><a href='./'>analytics<b>overflow</b></a><% print "/<span style='color:gray'>#{so_tag_display}</span>" if so_tag != all_tag %> </div>
 	
 	<div class='so-tag-list'>
 		view by tag: 
