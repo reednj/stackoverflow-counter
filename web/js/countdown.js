@@ -3,6 +3,17 @@
  * Nathan Reed, 29/04/2010
  */
 
+Element.implement({
+	//implement show
+	show: function() {
+		this.setStyle('display','');
+	},
+	//implement hide
+	hide: function() {
+		this.setStyle('display','none');
+	}
+});
+
 var CountUi = {
 	init: function() {
 

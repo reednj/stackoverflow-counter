@@ -62,8 +62,10 @@
 
 .so-tag-list {
 	float: right; 
+	text-align: right;
 	margin-top: 22px; 
 	padding-right:16px;
+	width: 50%;
 	
 	font-size: 14pt;
 	color: gray;

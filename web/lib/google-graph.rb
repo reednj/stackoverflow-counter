@@ -52,7 +52,7 @@ class GoogleChart
 		url_params << self.labels_s(@labels) if !@labels.nil?;
 		url_params << self.title_s(@titles) if !@titles.nil?;
 		url_params << self.spacing_s(@spacing) if !@spacing.nil?;
-		url_params << self.colors_s(@spacing) if !@color.nil?;
+		url_params << self.colors_s(@color) if !@color.nil?;
 
 		return "#{@base_url}?#{url_params.join('&')}"
 	end
@@ -63,7 +63,7 @@ class GoogleChart
 	end
 	
 	def colors_s(color)
-		return 'chco=' + color
+		return "chco=" + color
 	end
 	
 	def title_s(title)
