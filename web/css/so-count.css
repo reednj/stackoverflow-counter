@@ -41,6 +41,10 @@
 	font-size: 42pt;
 }
 
+a.so-counter {
+	color: black;
+}
+
 .so-label {
 	color: #999;
 	font-size: 18pt;
