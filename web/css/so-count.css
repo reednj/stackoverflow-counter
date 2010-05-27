@@ -16,6 +16,10 @@
 	padding-right: 8px;
 }
 
+.so-title a {
+	color: black !important;
+}
+
 .so-sub-title {
 	text-align: right;
 	font-size: 9pt;	
@@ -35,6 +39,11 @@
 
 .so-body {
 
+}
+
+.so-counter-list {
+	text-align: right;
+	margin-right: 16px
 }
 
 .so-counter {
