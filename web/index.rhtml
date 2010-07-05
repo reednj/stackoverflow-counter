@@ -96,7 +96,6 @@ end
 <script type='text/javascript'>
 	var SoUi = {
 		tags_visible: false,
-		ST_COOKIE:'so-st',
 		
 		init: function() {
 		},
@@ -154,9 +153,9 @@ end
 			if cur_tag == so_tag
 				print "<span #{tag_attr.join(' ')}> #{cur_tag} </span>";
 			elsif cur_tag == all_tag
-				print "<span #{tag_attr.join(' ')}><a href='#{$ROOT_PATH}'> #{cur_tag} </a></span>";
+				print "<a #{tag_attr.join(' ')} href='#{$ROOT_PATH}'> #{cur_tag} </a>";
 			else 
-				print "<span #{tag_attr.join(' ')}><a href='?tag=#{CGI.escape(cur_tag)}'> #{cur_tag} </a></span>";
+				print "<a #{tag_attr.join(' ')}href='?tag=#{CGI.escape(cur_tag)}'> #{cur_tag} </a>";
 			end
 		end	
 		%>

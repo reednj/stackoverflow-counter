@@ -14,7 +14,7 @@ end
 
 class StackOverflow
     
-    def initialize(api_url = 'http://api.stackoverflow.com/0.8/')
+    def initialize(api_url)
 		
 		@api_base_url = api_url;
 		@stats_cmd = 'stats';
