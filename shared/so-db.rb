@@ -191,12 +191,19 @@ class SoSql < EasySql
 	end
 
     def insert_tagvalue(tag_id, tag_value)
+    	
+    	#tag_name = tag_id
+    	
     	if tag_id.kind_of?(String)
 			tag_id = self.get_tag(tag_id);
 		end
     
         tag_id = Integer(tag_id);
         tag_value = Float(tag_value);
+
+		# update the tags. This is temporary.
+		#data = self.extract_tag_details(tag_name)
+		#self.update_tag(tag_id, data['desc'], data['site'])
 
         self.easy_query("insert ignore into TagValue (tag_id, tag_value) values (#{tag_id}, #{tag_value})");
 		
@@ -205,6 +212,8 @@ class SoSql < EasySql
 	# returns the tag_id.
 	# if the tag doesn't exist, it will be created.
 	def get_tag(tag_name, create_tag = true)
+		return tag_name if !tag_name.kind_of?(String)
+
 		tag_id = nil
 		tag_name = self.escape_string(tag_name)
 		tag_data = self.easy_query("select tag_id from Tag where tag_name = '#{tag_name}'");
@@ -224,9 +233,31 @@ class SoSql < EasySql
 	
 	def insert_tag(tag_name)
 		tag_name = self.escape_string(tag_name)
-		self.easy_query("insert ignore into Tag (tag_name) values ('#{tag_name}')");
+		tag_attr = self.extract_tag_details(tag_name)
+		
+		self.easy_query("insert ignore into Tag (tag_name, site, description) values ('#{tag_name}', '#{tag_attr['site']}', '#{tag_attr['desc']}')");
 
 		return self.insert_id
+	end
+	
+	# takes the tag name, and returns the site and description.
+	def extract_tag_details(tag_name)
+		data = tag_name.split('-', 3)
+		
+		if data[1] == 'tag'
+			desc = data[2]
+		else
+			desc = data[1]
+		end
+		
+		return {'tag_name'=>tag_name, 'site'=>data[0], 'desc'=>desc}
+	end
+	
+	def update_tag(tag_id, desc, site)
+		desc = self.escape_string(desc)
+		site = self.escape_string(site)
+		
+		return self.easy_query("update Tag set description='#{desc}', site='#{site}' where tag_id=#{tag_id}")
 	end
 
 end

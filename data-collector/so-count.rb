@@ -16,7 +16,7 @@ def main()
 	site_prefix = $SITE_TAG_PREFIX;
 	site_prefix = ARGV[-2][0..1] if ARGV.size == 2
 	
-	api_address = 'http://api.stackoverflow.com/0.9/'
+	api_address = 'http://api.stackoverflow.com/1.0/'
 	api_address = ARGV[-1] if ARGV.size == 2
 
     so = StackOverflow.new(api_address);
@@ -45,7 +45,7 @@ def main()
 		dbh.insert_tagvalue("#{site_prefix}-tag-#{curtag['name']}", curtag['count']);
 	end
 	puts '  question counts added (grouped by tag)'
-    
+   
     dbh.close;
     
 end

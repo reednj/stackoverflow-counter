@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 27, 2010 at 11:27 AM
+-- Generation Time: Jul 29, 2010 at 03:59 PM
 -- Server version: 5.0.51
 -- PHP Version: 5.2.4-2ubuntu5.10
 
@@ -22,10 +22,12 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 CREATE TABLE IF NOT EXISTS `Tag` (
   `tag_id` int(11) NOT NULL auto_increment,
   `tag_name` varchar(128) character set latin1 NOT NULL,
+  `site` varchar(16) default NULL,
+  `description` varchar(32) default NULL,
   `created_date` timestamp NOT NULL default CURRENT_TIMESTAMP,
   PRIMARY KEY  (`tag_id`),
   UNIQUE KEY `tag_name` (`tag_name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=233 ;
 
 -- --------------------------------------------------------
 
@@ -41,4 +43,4 @@ CREATE TABLE IF NOT EXISTS `TagValue` (
   PRIMARY KEY  (`value_id`),
   UNIQUE KEY `tag_id` (`tag_id`,`created_date`),
   KEY `created_date` (`created_date`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=323696 ;
