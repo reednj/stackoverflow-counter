@@ -259,5 +259,10 @@ class SoSql < EasySql
 		
 		return self.easy_query("update Tag set description='#{desc}', site='#{site}' where tag_id=#{tag_id}")
 	end
-
+	
+	def get_tags(site, count=32)
+		site = self.escape_string(site)
+		return self.easy_query("select tag_id, tag_name, site, description, created_date from Tag where site='#{site}' and tag_name like '%-tag-%' limit #{count}")		
+	end
+	
 end
