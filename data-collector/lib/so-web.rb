@@ -14,10 +14,11 @@ end
 
 class StackOverflow
     
-    def initialize(api_url)
+    def initialize(api_url, site_name)
 		
+		@site_name = site_name
 		@api_base_url = api_url;
-		@stats_cmd = 'stats';
+		@stats_cmd = 'info';
 		@tags_cmd = 'tags';
 		
 		# save the returned docs.
@@ -27,37 +28,37 @@ class StackOverflow
     
     def question_rate()
     	stats_data = self.get_stats();
-        return stats_data['statistics'][0]['questions_per_minute'];
+        return stats_data['items'][0]['questions_per_minute'];
     end
     
     def answer_rate()
     	stats_data = self.get_stats();
-        return stats_data['statistics'][0]['answers_per_minute'];
+        return stats_data['items'][0]['answers_per_minute'];
     end
     
     def question_count()
     	stats_data = self.get_stats();
-        return stats_data['statistics'][0]['total_questions'];
+        return stats_data['items'][0]['total_questions'];
     end
 
 	def answer_count()
     	stats_data = self.get_stats();
-        return stats_data['statistics'][0]['total_answers'];
+        return stats_data['items'][0]['total_answers'];
 	end
 
 	def comments_count()
     	stats_data = self.get_stats();
-        return stats_data['statistics'][0]['total_comments'];
+        return stats_data['items'][0]['total_comments'];
 	end
 	
 	def tag_counts()
     	tags_data = self.get_tags();
-		return tags_data['tags'];
+		return tags_data['items'];
 	end
 	
 	def get_stats()
 		if @stats_doc == nil
-			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd).inflate)
+			@stats_doc = JSON.parse(open(@api_base_url + @stats_cmd + "?site=" + @site_name).inflate)
 		end
 		
 		return @stats_doc;
@@ -65,7 +66,7 @@ class StackOverflow
 	
 	def get_tags()
 		if @tags_doc == nil
-			@tags_doc = JSON.parse(open(@api_base_url + @tags_cmd).inflate)
+			@tags_doc = JSON.parse(open(@api_base_url + @tags_cmd + "?site=" + @site_name).inflate)
 		end
 		
 		return @tags_doc;

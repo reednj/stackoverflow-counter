@@ -16,10 +16,11 @@ def main()
 	site_prefix = $SITE_TAG_PREFIX;
 	site_prefix = ARGV[-2][0..1] if ARGV.size == 2
 	
-	api_address = 'http://api.stackoverflow.com/1.0/'
-	api_address = ARGV[-1] if ARGV.size == 2
+	api_address = 'http://api.stackexchange.com/2.2/'
+	site_name = 'stackoverflow'
+	site_name = ARGV[-1] if ARGV.size == 2
 
-    so = StackOverflow.new(api_address);
+    so = StackOverflow.new(api_address, site_name);
     dbh =  SoSql.real_connect();
 
 	puts 'analyticsoverflow data retriever - Nathan Reed (c) 2010'
