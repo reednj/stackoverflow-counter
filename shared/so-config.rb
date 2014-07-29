@@ -6,7 +6,6 @@ $DB_USER = 'linkuser'
 $DB_PASS = ''
 
 $IS_PROD = false;
-$ROOT_PATH = '/dev/stackoverflow_count/web/';
 
 if $IS_PROD
 	# this is needed to make the app run on dreamhost... not really sure why
@@ -15,5 +14,4 @@ if $IS_PROD
 end
 
 $TIME_OFFSET = 0
-
 $SITE_TAG_PREFIX = 'so' # tagname prefix in the database
