@@ -116,17 +116,17 @@
 	
 	<% if so_tag == settings.all_tag %>
 	<div class='so-counter-block'>
-		<div><a id='<%= cur_site %>-comment-count' class='so-counter' href='./?site=<%= cur_site %>&tag=comment'> ... </a></div>
+		<div id='<%= cur_site %>-comment-count' class='so-counter'> ... </div>
 		<div class='so-label'> comments <span class='so-rate'><%= to_hourly(count_data[2]) %></span> </div>
 	</div>
 
 	<div class='so-counter-block'>
-		<div><a id='<%= cur_site %>-answer-count' class='so-counter' href='./?site=<%= cur_site %>&tag=answer'> ... </a></div>
+		<div id='<%= cur_site %>-answer-count' class='so-counter'>... </div>
 		<div class='so-label'> answers <span class='so-rate'><%= to_hourly(count_data[1]) %></span> </div>
 	</div>
 	
 	<div class='so-counter-block'>
-		<div><a id='<%= cur_site %>-question-count' class='so-counter' href='./?site=<%= cur_site %>&tag=question'> ... </a></div>
+		<div id='<%= cur_site %>-question-count' class='so-counter'> ... </div>
 		<div class='so-label'> questions <span class='so-rate'><%= to_hourly(count_data[0]) %></span> </div>
 	</div>
 	<% else %>
