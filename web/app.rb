@@ -14,6 +14,9 @@ rescue LoadError
 	load '../shared/so-db.rb'
 end
 
+#set :raise_errors, false
+#set :show_exceptions, true
+
 set :version, '1.0'
 set :erb, :escape_html => true
 
@@ -87,4 +90,9 @@ def to_daily(rate_data)
 	end
 
 	return (rate_data['rate']*86400).round().to_s + ' / day';
+end
+
+def to_human_time(seconds)
+	seconds = 0 if seconds.nil?
+	(seconds / 60).round
 end

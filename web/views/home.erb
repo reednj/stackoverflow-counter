@@ -100,7 +100,7 @@
 			<% elsif cur_tag == settings.all_tag %>
 				<%== "<a #{tag_attr.join(' ')} href='/'> #{cur_tag_name} </a>" %>
 			<% else  %>
-				<%== "<a #{tag_attr.join(' ')} href='/#{CGI.escape(cur_tag_site)}/#{CGI.escape(cur_tag_name)}/'> #{cur_tag_name} </a>" %>
+				<%== "<a #{tag_attr.join(' ')} href='/#{cur_tag_site}/#{cur_tag_name}/'> #{cur_tag_name} </a>" %>
 			<% end %>
 		<% end %>
 		
@@ -149,7 +149,7 @@
 <div class="footer">
 
 <div class='so-sub-title'>
-	<p>data updated from <a href='http://stackoverflow.com'>stackoverflow.com</a> every few hours </p>
+	<p>data updated from <a href='http://stackoverflow.com'>stackoverflow.com</a> <%= to_human_time(count_data[0]['age']) %> minutes ago </p>
 	<p><a href='http://twitter.com/reednj'>Nathan Reed</a> (c) 2010 </p>
 	<p><a href='http://github.com/reednj/stackoverflow-counter'>source code</a> is on <a href='http://github.com'>github.com</a></p>
 </div>
