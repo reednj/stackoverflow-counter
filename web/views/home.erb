@@ -55,17 +55,20 @@
 	<div class='left'>
 		<div class='so-site-select'>
 			site: 
-	<% 
+	<%
+		s = ""
 		site_list.each_with_index do |site_item, i| 
-			if site_item == cur_site
-				puts "<span>#{site_item}</span>"
-			else
-				puts "<a href='?site=#{site_item}'>#{site_item}</a>"
-			end
+			if site_item == cur_site %>
+				<span><%= site_item %></span>
+			<% else %>
+				<a href='/<%= site_item %>/'><%= site_item %></a>
+			<% end %>
 			
-			print ' | '  if i != site_list.length-1
-		end
-	%>
+			<% if i != site_list.length-1 %>
+				<%= ' | ' %>
+			<% end %>
+
+		<% end %>
 			
 		</div>
 		
