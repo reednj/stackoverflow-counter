@@ -1,16 +1,8 @@
 #!/bin/bash
 
-# copy to temp directory
-rm -rf ~/tmpcpy/*
-cp -R ../web/* ~/tmpcpy/
-cp -R ../shared/*.rb ~/tmpcpy/lib/
+ssh reednj@popacular.com "rm -rf ~/so.reednj.com/*"
+scp -r ../web/* reednj@popacular.com:~/so.reednj.com/
+scp -r ../shared reednj@popacular.com:~/so.reednj.com/lib
+ssh reednj@popacular.com "cp ~/code/config_backup/so/so-config.rb ~/so.reednj.com/lib/"
 
-# remove the config file, and other files we don't want to copy
-# rename the prod config file to that gets deployed
-rm ~/tmpcpy/lib/so-config.rb
-mv ~/tmpcpy/lib/so-config.prod.rb ~/tmpcpy/lib/so-config.rb
-
-scp -r ~/tmpcpy/* reednj@popacular.com:~/popacular.com/analyticsoverflow/
-
-# clean temp directory
-rm -rf ~/tmpcpy/*
+ssh reednj@popacular.com "mkdir ~/so.reednj.com/tmp; touch ~/so.reednj.com/tmp/restart.txt"
