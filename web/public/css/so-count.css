@@ -107,6 +107,33 @@ html, body {
 	height: 100%;
 	margin: 0 auto -70px; 
 }
+
 .footer, .push {
 	height: 70px; 
+}
+
+@media only screen and (max-width:400px) {
+	.so-header {
+		padding: 8px;
+	}
+
+	.so-tag-list {
+		float: none;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		text-align: left;
+	}
+
+	.wrapper {
+		margin: 0 auto -90px; 
+	}
+
+	.footer, .push {
+		height: 90px; 
+	}
+
+	.footer .so-sub-title {
+		padding-top: 16px;
+	}
 }
