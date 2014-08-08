@@ -5,6 +5,7 @@ require "sinatra/reloader" if development?
 require 'json'
 require 'erubis'
 require 'pp'
+require 'cgi'
 
 $LOAD_PATH << './lib' << '../shared'
 

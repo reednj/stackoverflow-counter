@@ -100,7 +100,7 @@
 			<% elsif cur_tag == settings.all_tag %>
 				<%== "<a #{tag_attr.join(' ')} href='/'> #{cur_tag_name} </a>" %>
 			<% else  %>
-				<%== "<a #{tag_attr.join(' ')} href='/#{cur_tag_site}/#{cur_tag_name}/'> #{cur_tag_name} </a>" %>
+				<%== "<a #{tag_attr.join(' ')} href='/#{cur_tag_site}/#{CGI.escape(cur_tag_name)}/'> #{cur_tag_name} </a>" %>
 			<% end %>
 		<% end %>
 		
