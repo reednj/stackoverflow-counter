@@ -73,7 +73,9 @@
 		</div>
 		
 		<div class='so-title'>
-			<a href='./'>analytics<b>overflow</b></a><% print "/<span style='color:gray'>#{so_tag_display}</span>" if so_tag != settings.all_tag %>
+			<a href='./'>analytics<b>overflow</b></a>
+
+			<%== so_tag != settings.all_tag ? "/ <span style='color:gray'>#{so_tag_display}</span>" : '' %>
 		</div>
 	</div>
 	
