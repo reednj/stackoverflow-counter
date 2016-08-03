@@ -2,16 +2,15 @@
 #!/bin/bash
 
 # copy to temp directory
-rm -rf ~/tmpcpy/*
-cp -R ../data-collector/* ~/tmpcpy/
-cp -R ../shared/*.rb ~/tmpcpy/lib/
+TMP=/tmp/so
+mkdir -p $TMP
 
-# remove the config file, and other files we don't want to copy
-# rename the prod config file to that gets deployed
-rm ~/tmpcpy/lib/so-config.rb ~/tmpcpy/so-test.rb
-mv ~/tmpcpy/lib/so-config.prod.rb ~/tmpcpy/lib/so-config.rb
+rm -rf $TMP/*
+cp -R ../data-collector/* $TMP/
+cp -R ../shared/*.rb $TMP/lib/
 
-scp -r ~/tmpcpy/* reednj@popacular.com:~/scripts/analyticsoverflow/
+scp -r $TMP/* reednj@popacular.com:~/scripts/analyticsoverflow/
+ssh reednj@popacular.com "cp ~/code/config_backup/so/so-config.rb ~/scripts/analyticsoverflow/lib/"
 
 # clean temp directory
-rm -rf ~/tmpcpy/*
+rm -rf $TMP/*
