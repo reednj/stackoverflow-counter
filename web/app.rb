@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/json'
+require 'sinatra/content_for'
 require "sinatra/reloader" if development?
 
 require 'json'
@@ -77,7 +78,9 @@ get '/?:cur_site?/?:so_tag?/' do |cur_site, so_tag|
 
 	db.close
 
-	erb :home, :locals => {
+	view_name = so_tag == settings.all_tag ? :home : :tag
+
+	erb view_name, :layout => :_layout, :locals => {
 		:count_data => count_data,
 		:site_list => site_list,
 		:popular_tags => popular_tags,

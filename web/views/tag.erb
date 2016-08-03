@@ -1,0 +1,22 @@
+
+<% content_for :header do %>
+
+<script type='text/javascript'>
+	var _rate_data = <%== count_data.to_json %>;
+</script>
+
+<% end %>
+
+<% content_for :body do %>
+
+<div class='so-counter-list'>
+	
+	<div class='so-counter-block right'>
+		<div id='<%= question_count_tag %>' class='so-counter'> ... </div>
+		<div class='so-label'> <%= tag_type %> <span class='so-rate'><%= to_daily(count_data[0]) %></span> </div>
+	</div>
+
+	<div class='clear'></div>
+</div>
+
+<% end %>

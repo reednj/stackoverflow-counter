@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<title> analyticsoverflow - tracking the activity on stackoverflow.com </title>
+
+<meta http-equiv="REFRESH" content="300">
+<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+
+<script src='/js/mootools-core-full-compat-yc.js' type='text/javascript'></script>
+<script src='/js/countdown.js' type='text/javascript'></script>
+
+<script type='text/javascript'>
+	var SoUi = {
+		tags_visible: false,
+		
+		init: function() {
+		},
+		
+		toggle_tags: function() {
+			if(this.tags_visible == false) {
+				this.show_tags();
+			} else {
+				this.hide_tags();
+			}
+			
+			this.tags_visible = !this.tags_visible;
+		},
+		
+		show_tags: function() {
+			$$('.so-more-tags').each(function(e) {e.show();});
+			$('so-st-link').innerHTML = 'less...'
+		},
+		
+		hide_tags: function() {
+			$$('.so-more-tags').each(function(e) {e.hide();});
+			$('so-st-link').innerHTML = 'more...'
+		}
+	}
+</script>
+
+<script type='text/javascript'>
+	var _rate_data = <%== count_data.to_json %>;
+</script>
+
+<%== yield_content :header %>
+
+<link rel="stylesheet" href="/css/default.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/css/so-count.css?v=2" type="text/css" media="screen, projection">
+
+</head>
+
+<body onload='SoUi.init();'>
+
+<div class="wrapper">
+
+<div class='so-header'>
+	<div class='left'>
+		<div class='so-site-select'>
+			site: 
+	<%
+		s = ""
+		site_list.each_with_index do |site_item, i| 
+			if site_item == cur_site %>
+				<span><%= site_item %></span>
+			<% else %>
+				<a href='/<%= site_item %>/'><%= site_item %></a>
+			<% end %>
+			
+			<% if i != site_list.length-1 %>
+				<%= ' | ' %>
+			<% end %>
+
+		<% end %>
+			
+		</div>
+		
+		<div class='so-title'>
+			<a href='/'>analytics<b>overflow</b></a>
+
+			<%== so_tag != settings.all_tag ? "/ <span style='color:gray'>#{so_tag_display}</span>" : '' %>
+		</div>
+	</div>
+	
+	<div class='so-tag-list'>
+		view by tag: 
+
+		<% 
+
+		tag_index = popular_tags.index(so_tag)
+		tag_index = -1 if tag_index.nil?
+		
+		popular_tags.each_with_index do |cur_tag, i|
+
+			tag_attr = []
+			tag_attr << "class='so-more-tags'" if i > settings.max_tags_default
+			tag_attr << "style='display:none'" if i > settings.max_tags_default and tag_index <= settings.max_tags_default
+				
+			cur_tag_name = cur_tag['tag_name'].split('-', 3)[-1]
+			cur_tag_site = cur_tag['site']
+			%>
+
+			<% if cur_tag_name == so_tag %>
+				<%== "<span #{tag_attr.join(' ')}> #{cur_tag_name} </span>" %>
+			<% elsif cur_tag == settings.all_tag %>
+				<%== "<a #{tag_attr.join(' ')} href='/'> #{cur_tag_name} </a>" %>
+			<% else  %>
+				<%== "<a #{tag_attr.join(' ')} href='/#{cur_tag_site}/#{CGI.escape(cur_tag_name)}/'> #{cur_tag_name} </a>" %>
+			<% end %>
+		<% end %>
+		
+		<a id='so-st-link' href="javascript:SoUi.toggle_tags();"><i>more...</i></a>
+	</div>
+	
+	<div class='clear'></div>
+</div>
+
+<div class='so-body'>
+
+<%== yield_content :body %>
+
+</div>
+
+<div class="push"></div>
+</div>
+
+<div class="footer">
+
+<div class='so-sub-title'>
+	<p>data updated from <a href='http://stackoverflow.com'>stackoverflow.com</a> <%= to_human_time(count_data[0]['age']) %> minutes ago </p>
+	<p><a href='http://twitter.com/reednj'>Nathan Reed</a> (c) 2010 </p>
+	<p><a href='http://github.com/reednj/stackoverflow-counter'>source code</a> is on <a href='http://github.com'>github.com</a></p>
+</div>
+
+</div>
+
+
+</body>
+</html>
