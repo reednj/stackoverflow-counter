@@ -42,14 +42,16 @@ helpers do
 	def site_list
 		['so', 'sf', 'su']
 	end
+
+	def get_popular_tags(site_code)
+		popular_tags = DB.get_tags(site_code)
+		popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site' => site_code})
+		return popular_tags
+	end
 end
 
 get '/?:cur_site?/' do |cur_site|
-	cur_site = 'so' if cur_site.nil?
-
-	# generate the list of tags that we can click on
-	popular_tags = DB.get_tags(cur_site)
-	popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site'=>cur_site})
+	cur_site ||= 'so'
 
 	# its the front page. Get the three main counters.
 	q_count = DB.get_rate_from_rate("#{cur_site}-question");
@@ -59,24 +61,18 @@ get '/?:cur_site?/' do |cur_site|
 
 	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
-		:popular_tags => popular_tags,
+		:popular_tags => get_popular_tags(cur_site),
 		:so_tag => settings.all_tag,
-		:so_tag_display => settings.all_tag,
 		:cur_site => cur_site
 	}
 end
 
 get '/:cur_site/:so_tag/' do |cur_site, so_tag|
+	cur_site ||= 'so'
+	so_tag ||= settings.all_tag
 	return 'not found' if so_tag == 'apache'
-
-	cur_site = 'so' if cur_site.nil?
-
-	so_tag = settings.all_tag if so_tag.nil?
+	
 	so_tag_display = so_tag
-
-	# generate the list of tags that we can click on
-	popular_tags = DB.get_tags(cur_site)
-	popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site'=>cur_site})
 
 	# is this one of the main 3 tags? they get treated differently...
 	if ['question', 'answer', 'comment'].include?(so_tag)
@@ -89,11 +85,10 @@ get '/:cur_site/:so_tag/' do |cur_site, so_tag|
 	end
 
 	q_count = DB.get_rate_from_count(question_count_tag);
-	count_data = [q_count];
 
 	erb :tag, :layout => :_layout, :locals => {
-		:count_data => count_data,
-		:popular_tags => popular_tags,
+		:count_data => [q_count],
+		:popular_tags => get_popular_tags(cur_site),
 		:so_tag => so_tag,
 		:so_tag_display => so_tag_display,
 		:question_count_tag => question_count_tag,
