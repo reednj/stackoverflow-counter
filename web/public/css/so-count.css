@@ -91,6 +91,40 @@ a.so-counter {
 	
 }
 
+/* yearly tag tables */
+.so-years {
+	margin-top: 8px;
+}
+
+.so-year-tag {
+	font-size: 14pt;
+	float: right;
+	display: inline-block;
+	margin-right: 16px;
+}
+.so-year-tag h2 {
+	color: #ccc;
+	margin-bottom: 4px;
+	text-align: center;
+}
+
+.so-year-tag table {
+	border-collapse: collapse;
+}
+
+.so-year-tag table td {
+	padding: 2px 6px;
+}
+
+.so-year-tag td.td-desc {
+	font-weight: bold;
+}
+
+.so-year-tag td.td-count {
+	color: gray;
+	text-align: right;
+}
+
 /*
 
 Sticky Footer by Ryan Fait
