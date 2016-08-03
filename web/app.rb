@@ -20,7 +20,7 @@ end
 #set :raise_errors, false
 #set :show_exceptions, true
 
-set :version, '1.0'
+set :version, '2.1'
 set :erb, :escape_html => true
 
 set :all_tag, 'all'
