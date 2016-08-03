@@ -27,6 +27,8 @@ set :all_tag, 'all'
 set :max_tags, 50
 set :max_tags_default, 4
 
+DB = SoSql.real_connect;
+
 helpers do
 	def load_json(path)
 		return {} if ! File.exist? path
@@ -36,25 +38,24 @@ helpers do
 	def yearly_tag_data
 		@yearly_tag_data ||= load_json '../yearly-tags.json'
 	end
+
+	def site_list
+		['so', 'sf', 'su']
+	end
 end
 
 get '/?:cur_site?/' do |cur_site|
-	db = SoSql.real_connect;
-
-	site_list = ['so', 'sf', 'su']
 	cur_site = 'so' if cur_site.nil?
 
 	# generate the list of tags that we can click on
-	popular_tags = db.get_tags(cur_site)
+	popular_tags = DB.get_tags(cur_site)
 	popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site'=>cur_site})
 
 	# its the front page. Get the three main counters.
-	q_count = db.get_rate_from_rate("#{cur_site}-question");
-	a_count = db.get_rate_from_rate("#{cur_site}-answer");
-	c_count = db.get_rate_from_count("#{cur_site}-comment-count");
+	q_count = DB.get_rate_from_rate("#{cur_site}-question");
+	a_count = DB.get_rate_from_rate("#{cur_site}-answer");
+	c_count = DB.get_rate_from_count("#{cur_site}-comment-count");
 	count_data = [q_count, a_count, c_count];
-
-	db.close
 
 	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
@@ -67,16 +68,14 @@ get '/?:cur_site?/' do |cur_site|
 end
 
 get '/:cur_site/:so_tag/' do |cur_site, so_tag|
-	db = SoSql.real_connect;
 
-	site_list = ['so', 'sf', 'su']
 	cur_site = 'so' if cur_site.nil?
 
 	so_tag = settings.all_tag if so_tag.nil?
 	so_tag_display = so_tag
 
 	# generate the list of tags that we can click on
-	popular_tags = db.get_tags(cur_site)
+	popular_tags = DB.get_tags(cur_site)
 	popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site'=>cur_site})
 
 	# is this one of the main 3 tags? they get treated differently...
@@ -89,11 +88,9 @@ get '/:cur_site/:so_tag/' do |cur_site, so_tag|
 		tag_type = 'questions'
 	end
 
-	q_count = db.get_rate_from_count(question_count_tag);
+	q_count = DB.get_rate_from_count(question_count_tag);
 	count_data = [q_count];
-		
-
-	db.close
+	
 
 	view_name = so_tag == settings.all_tag ? :home : :tag
 
