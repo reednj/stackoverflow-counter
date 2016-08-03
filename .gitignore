@@ -1,3 +1,4 @@
 script/sync.config
 data-collector/so-test.rb
 shared/so-config.prod.rb
+yearly-tags.json
