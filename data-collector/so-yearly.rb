@@ -12,8 +12,21 @@ require 'so-config'
 
 class App
 	def main
-		data = get_top_tags_for_year(2015)
-		
+		year = Time.now.year
+		year = ARGV.last.to_i if ARGV.length > 0
+		json_path = 'yearly-tags.json'
+
+		current_data = load_json json_path
+		year_data = get_top_tags_for_year(year)
+		current_data[year.to_s.to_sym] = year_data
+		current_data.save_json json_path
+
+		# print a status update so we know we got something...
+		puts year
+		puts "===="
+		year_data.each do |tag|
+			puts "#{tag[:tag_name]}: #{tag[:tag_value_delta].round}"
+		end
 	end
 
 	def db
@@ -27,6 +40,7 @@ class App
 	end
 
 	def load_json(path)
+		return {} if ! File.exist? path
 		JSON.parse File.read(path), :symbolize_names => true
 	end
 
