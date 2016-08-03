@@ -39,10 +39,18 @@
 	<div class='clear'></div>
 </div>
 
-<% if so_tag == settings.all_tag %>
-	<div>
-		<pre><%== yearly_tag_data[:'2010'].to_yaml %></pre>
-	</div>
-<% end %>
+<div class='so-year-tag'>
+	<table>
+	<tbody>
+	<% yearly_tag_data[:'2010'].first(8).each_with_index do |tag, i| %>
+		<tr>
+			<td><%= i + 1 %>.</td>
+			<td><%= tag[:description] %></td>
+			<td><%= tag[:tag_value_delta].to_human %></td>
+		</tr>
+	<% end %>
+	</tbody>
+	</table>
+<div>
 
 <% end %>

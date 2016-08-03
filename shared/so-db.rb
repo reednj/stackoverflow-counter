@@ -4,6 +4,45 @@ load 'so-config.rb'
 require 'mysql'
 require 'date'
 
+class Numeric
+
+	# will convert numbers like 3456789 to 3.45m - much easier for people
+	# to easily understand
+	def to_human(len = 3)
+
+		unit = ''
+		n = self
+		n = self.to_f unless n.is_a? Numeric
+		n = self.to_f if defined?(BigDecimal) && n.is_a?(BigDecimal)
+
+		if n > 1100
+			n /= 1000.0
+			unit = 'k'
+		end
+
+		if n > 1100
+			n /= 1000.0
+			unit = 'm'
+		end
+
+		if n > 1100
+			n /= 1000.0
+			unit = 'T'
+		end
+
+		# now we have the unit and the number we want to format it in a 
+		# nice way so there is a consistant number of characters
+		s = n.to_s
+		if s.length > len
+			s = s[0..len]
+			s.chop! if s[-1] == '.'
+		end
+
+		"#{s}#{unit}"
+	end
+end
+
+
 class Array
 
 	def every(n)
