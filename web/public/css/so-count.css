@@ -124,6 +124,10 @@ a.so-counter {
 	padding: 2px 6px;
 }
 
+.so-year-tag td.td-list-index {
+	text-align: right;
+}
+
 .so-year-tag td.td-desc {
 	font-weight: bold;
 }
