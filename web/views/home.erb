@@ -54,7 +54,7 @@
 			<h2><%= year %></h2>
 			<table>
 			<tbody>
-			<% (yearly_tag_data[year.to_s.to_sym] || []).first(10).each_with_index do |tag, i| %>
+			<% (yearly_tag_data[year.to_s.to_sym] || []).first(8).each_with_index do |tag, i| %>
 				<tr>
 					<td class='td-list-index'><%= i + 1 %>.</td>
 					<td class='td-desc'><%= tag[:description] %></td>
