@@ -63,7 +63,8 @@ get '/?:cur_site?/' do |cur_site|
 		:count_data => count_data,
 		:popular_tags => get_popular_tags(cur_site),
 		:so_tag => settings.all_tag,
-		:cur_site => cur_site
+		:cur_site => cur_site,
+		:show_yearly_tag_data => (cur_site == 'so')
 	}
 end
 
