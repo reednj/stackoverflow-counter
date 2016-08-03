@@ -45,8 +45,8 @@ class App
 	end
 
 	def get_top_tags_for_year(year)
-		start_date = Time.new(year, 1, 1)
-		end_date = Time.new(year + 1, 1, 1)
+		start_date = Time.gm(year, 1, 1)
+		end_date = Time.gm(year + 1, 1, 1)
 
 		query = "select 
 			t.tag_name,
