@@ -3,6 +3,11 @@
 
 <script type='text/javascript'>
 	var _rate_data = <%== count_data.to_json %>;
+
+	function show_all_tags() {
+		document.getElements('.so-year-tag').removeClass('hidden');
+		document.getElement('.so-years .more-link').addClass('hidden');
+	}
 </script>
 
 <% end %>
@@ -42,8 +47,10 @@
 <% if show_yearly_tag_data %>
 	<div class="so-years">
 		
-	<% (2010..Time.now.year).to_a.reverse.each do |year| %>
-		<div class='so-year-tag'>
+	<% (2010..Time.now.year).to_a.reverse.each do |year| 
+		is_recent = Time.now.year - year < 3
+	%>
+		<div class='so-year-tag <%= is_recent ? '' : 'hidden' %>'>
 			<h2><%= year %></h2>
 			<table>
 			<tbody>
@@ -60,6 +67,7 @@
 	<% end %>
 
 	<div class='clear'></div>
+	<div class='more-link'><a href='javascript:show_all_tags()'>show all years...</a></div>
 	</div>
 
 <% end %>

@@ -96,6 +96,14 @@ a.so-counter {
 	margin-top: 8px;
 }
 
+.so-years .more-link {
+	font-size: 14pt;
+	font-weight: bold;
+	margin-top: 6px;
+	margin-right: 20px;
+	text-align: right;
+}
+
 .so-year-tag {
 	font-size: 14pt;
 	float: right;
@@ -123,6 +131,10 @@ a.so-counter {
 .so-year-tag td.td-count {
 	color: gray;
 	text-align: right;
+}
+
+.hidden {
+	display:none;
 }
 
 /*
