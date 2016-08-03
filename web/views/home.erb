@@ -132,6 +132,7 @@
 		<div id='<%= cur_site %>-question-count' class='so-counter'> ... </div>
 		<div class='so-label'> questions <span class='so-rate'><%= to_hourly(count_data[0]) %></span> </div>
 	</div>
+	
 	<% else %>
 
 	<div class='so-counter-block right'>
@@ -143,6 +144,12 @@
 
 	<div class='clear'></div>
 </div>
+
+<% if so_tag == settings.all_tag %>
+<div>
+	<pre><%== yearly_tag_data[:'2010'].to_yaml %></pre>
+</div>
+<% end %>
 
 </div>
 

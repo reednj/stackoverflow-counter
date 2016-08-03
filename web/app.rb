@@ -6,6 +6,7 @@ require 'json'
 require 'erubis'
 require 'pp'
 require 'cgi'
+require 'yaml'
 
 $LOAD_PATH << './lib' << '../shared'
 
@@ -25,7 +26,16 @@ set :all_tag, 'all'
 set :max_tags, 50
 set :max_tags_default, 4
 
+helpers do
+	def load_json(path)
+		return {} if ! File.exist? path
+		JSON.parse File.read(path), :symbolize_names => true
+	end
 
+	def yearly_tag_data
+		@yearly_tag_data ||= load_json '../yearly-tags.json'
+	end
+end
 
 get '/?:cur_site?/?:so_tag?/' do |cur_site, so_tag|
 	db = SoSql.real_connect;
