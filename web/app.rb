@@ -1,11 +1,13 @@
 require 'sinatra'
 require 'sinatra/json'
+require 'sinatra/content_for'
 require "sinatra/reloader" if development?
 
 require 'json'
 require 'erubis'
 require 'pp'
 require 'cgi'
+require 'yaml'
 
 $LOAD_PATH << './lib' << '../shared'
 
@@ -18,59 +20,77 @@ end
 #set :raise_errors, false
 #set :show_exceptions, true
 
-set :version, '1.0'
+set :version, '2.1'
 set :erb, :escape_html => true
 
 set :all_tag, 'all'
 set :max_tags, 50
 set :max_tags_default, 4
 
+DB = SoSql.real_connect;
 
-
-get '/?:cur_site?/?:so_tag?/' do |cur_site, so_tag|
-	db = SoSql.real_connect;
-
-	site_list = ['so', 'sf', 'su']
-	cur_site = 'so' if cur_site.nil?
-
-	so_tag = settings.all_tag if so_tag.nil?
-	so_tag_display = so_tag
-
-	#cur_site = query.params['site'][0] if !query.params['site'][0].nil?
-
-	# generate the list of tags that we can click on
-	popular_tags = db.get_tags(cur_site)
-	popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site'=>cur_site})
-
-	if so_tag == settings.all_tag 
-		# its the front page. Get the three main counters.
-		q_count = db.get_rate_from_rate("#{cur_site}-question");
-		a_count = db.get_rate_from_rate("#{cur_site}-answer");
-		c_count = db.get_rate_from_count("#{cur_site}-comment-count");
-		
-		count_data = [q_count, a_count, c_count];
-	else 
-		# is this one of the main 3 tags? they get treated differently...
-		if ['question', 'answer', 'comment'].include?(so_tag)
-			question_count_tag = "#{cur_site}-#{so_tag}-count"
-			tag_type = so_tag + 's'
-			so_tag_display = so_tag + 's'
-		else	
-			question_count_tag = "#{cur_site}-tag-#{so_tag}"
-			tag_type = 'questions'
-		end
-
-		q_count = db.get_rate_from_count(question_count_tag);
-		count_data = [q_count];
-		
+helpers do
+	def load_json(path)
+		return {} if ! File.exist? path
+		JSON.parse File.read(path), :symbolize_names => true
 	end
 
-	db.close
+	def yearly_tag_data
+		path = File.exist?('../yearly-tags.json') ? '../yearly-tags.json' : 'yearly-tags.json'
+		@yearly_tag_data ||= load_json(path)
+	end
 
-	erb :home, :locals => {
+	def site_list
+		['so', 'sf', 'su']
+	end
+
+	def get_popular_tags(site_code)
+		popular_tags = DB.get_tags(site_code)
+		popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site' => site_code})
+		return popular_tags
+	end
+end
+
+get '/?:cur_site?/' do |cur_site|
+	cur_site ||= 'so'
+
+	# its the front page. Get the three main counters.
+	q_count = DB.get_rate_from_rate("#{cur_site}-question");
+	a_count = DB.get_rate_from_rate("#{cur_site}-answer");
+	c_count = DB.get_rate_from_count("#{cur_site}-comment-count");
+	count_data = [q_count, a_count, c_count];
+
+	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
-		:site_list => site_list,
-		:popular_tags => popular_tags,
+		:popular_tags => get_popular_tags(cur_site),
+		:so_tag => settings.all_tag,
+		:cur_site => cur_site,
+		:show_yearly_tag_data => (cur_site == 'so')
+	}
+end
+
+get '/:cur_site/:so_tag/' do |cur_site, so_tag|
+	cur_site ||= 'so'
+	so_tag ||= settings.all_tag
+	return 'not found' if so_tag == 'apache'
+	
+	so_tag_display = so_tag
+
+	# is this one of the main 3 tags? they get treated differently...
+	if ['question', 'answer', 'comment'].include?(so_tag)
+		question_count_tag = "#{cur_site}-#{so_tag}-count"
+		tag_type = so_tag + 's'
+		so_tag_display = so_tag + 's'
+	else	
+		question_count_tag = "#{cur_site}-tag-#{so_tag}"
+		tag_type = 'questions'
+	end
+
+	q_count = DB.get_rate_from_count(question_count_tag);
+
+	erb :tag, :layout => :_layout, :locals => {
+		:count_data => [q_count],
+		:popular_tags => get_popular_tags(cur_site),
 		:so_tag => so_tag,
 		:so_tag_display => so_tag_display,
 		:question_count_tag => question_count_tag,
@@ -78,7 +98,6 @@ get '/?:cur_site?/?:so_tag?/' do |cur_site, so_tag|
 		:cur_site => cur_site
 	}
 end
-
 
 def to_hourly(rate_data)
 	if rate_data.nil?
