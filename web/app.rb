@@ -59,7 +59,6 @@ get '/?:cur_site?/' do |cur_site|
 
 	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
-		:site_list => site_list,
 		:popular_tags => popular_tags,
 		:so_tag => settings.all_tag,
 		:so_tag_display => settings.all_tag,
@@ -94,7 +93,6 @@ get '/:cur_site/:so_tag/' do |cur_site, so_tag|
 
 	erb :tag, :layout => :_layout, :locals => {
 		:count_data => count_data,
-		:site_list => site_list,
 		:popular_tags => popular_tags,
 		:so_tag => so_tag,
 		:so_tag_display => so_tag_display,
