@@ -102,8 +102,8 @@
 
 			<% if cur_tag_name == so_tag %>
 				<%== "<span #{tag_attr.join(' ')}> #{cur_tag_name} </span>" %>
-			<% elsif cur_tag == settings.all_tag %>
-				<%== "<a #{tag_attr.join(' ')} href='/'> #{cur_tag_name} </a>" %>
+			<% elsif cur_tag == settings.all_tag || cur_tag_name == 'all' %>
+				<%== "<a #{tag_attr.join(' ')} href='/#{cur_tag_site}/'> #{cur_tag_name} </a>" %>
 			<% else  %>
 				<%== "<a #{tag_attr.join(' ')} href='/#{cur_tag_site}/#{CGI.escape(cur_tag_name)}/'> #{cur_tag_name} </a>" %>
 			<% end %>

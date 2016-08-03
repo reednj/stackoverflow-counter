@@ -68,6 +68,7 @@ get '/?:cur_site?/' do |cur_site|
 end
 
 get '/:cur_site/:so_tag/' do |cur_site, so_tag|
+	return 'not found' if so_tag == 'apache'
 
 	cur_site = 'so' if cur_site.nil?
 
@@ -90,11 +91,8 @@ get '/:cur_site/:so_tag/' do |cur_site, so_tag|
 
 	q_count = DB.get_rate_from_count(question_count_tag);
 	count_data = [q_count];
-	
 
-	view_name = so_tag == settings.all_tag ? :home : :tag
-
-	erb view_name, :layout => :_layout, :locals => {
+	erb :tag, :layout => :_layout, :locals => {
 		:count_data => count_data,
 		:site_list => site_list,
 		:popular_tags => popular_tags,
