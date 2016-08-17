@@ -27,8 +27,6 @@ set :all_tag, 'all'
 set :max_tags, 50
 set :max_tags_default, 4
 
-DB = SoSql.real_connect;
-
 helpers do
 	def load_json(path)
 		return {} if ! File.exist? path
@@ -44,25 +42,38 @@ helpers do
 		['so', 'sf', 'su']
 	end
 
-	def get_popular_tags(site_code)
-		popular_tags = DB.get_tags(site_code)
+	def get_popular_tags(db, site_code)
+		popular_tags = db.get_tags(site_code)
 		popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site' => site_code})
 		return popular_tags
+	end
+
+	def db_exec
+		db = SoSql.real_connect
+		yield(db) if block_given?
+		db.close
 	end
 end
 
 get '/?:cur_site?/' do |cur_site|
 	cur_site ||= 'so'
+	count_data = nil
+	popular_tags = nil
 
-	# its the front page. Get the three main counters.
-	q_count = DB.get_rate_from_rate("#{cur_site}-question");
-	a_count = DB.get_rate_from_rate("#{cur_site}-answer");
-	c_count = DB.get_rate_from_count("#{cur_site}-comment-count");
-	count_data = [q_count, a_count, c_count];
+	db_exec do |db|
+		# its the front page. Get the three main counters.
+		
+		q_count = db.get_rate_from_rate("#{cur_site}-question")
+		a_count = db.get_rate_from_rate("#{cur_site}-answer")
+		c_count = db.get_rate_from_count("#{cur_site}-comment-count")
+		count_data = [q_count, a_count, c_count]
+
+		popular_tags = get_popular_tags(db, cur_site)
+	end
 
 	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
-		:popular_tags => get_popular_tags(cur_site),
+		:popular_tags => popular_tags,
 		:so_tag => settings.all_tag,
 		:cur_site => cur_site,
 		:show_yearly_tag_data => (cur_site == 'so')
@@ -86,11 +97,17 @@ get '/:cur_site/:so_tag/' do |cur_site, so_tag|
 		tag_type = 'questions'
 	end
 
-	q_count = DB.get_rate_from_count(question_count_tag);
+	q_count = nil
+	popular_tags = nil
+
+	db_exec do |db|
+		q_count = db.get_rate_from_count(question_count_tag)
+		popular_tags = get_popular_tags(db, cur_site)
+	end
 
 	erb :tag, :layout => :_layout, :locals => {
 		:count_data => [q_count],
-		:popular_tags => get_popular_tags(cur_site),
+		:popular_tags => popular_tags,
 		:so_tag => so_tag,
 		:so_tag_display => so_tag_display,
 		:question_count_tag => question_count_tag,

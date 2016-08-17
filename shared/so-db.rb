@@ -1,6 +1,6 @@
 # Nathan Reed, 29/04/2010
 
-load 'so-config.rb'
+require_relative './so-config.rb'
 require 'mysql'
 require 'date'
 
@@ -96,7 +96,6 @@ end
 class SoSql < EasySql
 
 	def self.real_connect()
-
 		@db_server = $DB_HOST;
 		@db_name = $DB_NAME;
 		@db_user = $DB_USER;
