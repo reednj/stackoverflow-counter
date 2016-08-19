@@ -43,6 +43,16 @@ class Tag < Sequel::Model(:Tag)
 		def top_tags(site_id)
 			where(:site => site_id).where("tag_name not like '%-count' and tag_name not like '%-rate'").limit(100)
 		end
+
+		def with_name(tag_name)
+			where(:tag_name => tag_name).first
+		end
+	end
+
+	# could maybe do this as an assoc, but I want to keep it as a dataset, and
+	# not have the data actually cache, so it is better to do it the naive way
+	def values
+		TagValues.where(:tag_id => tag_id).reverse_order(:value_id).limit(1000)
 	end
 
 	def name
@@ -57,14 +67,38 @@ class Tag < Sequel::Model(:Tag)
 	def tag_url
 		URI.escape"/#{site}/#{name}"
 	end
+
+	def latest_value
+		@latest_value ||= values.first
+	end
+
 end
 
-class TagValue < Sequel::Model(:Tag)
+class TagValues < Sequel::Model(:TagValue)
+	def age
+		Time.now - created_date
+	end
 
+	def previous
+		@previous ||= TagValues.where(:tag_id => tag_id).
+			where('value_id < ?', value_id).
+			reverse_order(:value_id).
+			first
+	end
+
+	def rate_per_sec
+		(self.tag_value - previous.tag_value).to_f / (self.created_date - previous.created_date).to_f
+	end
+
+	def estimated_tag_value
+		tag_value + rate_per_sec * age
+	end
 end
 
 get '/test' do
-	json Tag.top_tags('so').all.map{|a| a.link_html }
+	json [
+		Tag.with_name('so-question-count').latest_value.estimated_tag_value
+	]
 end
 
 helpers do
