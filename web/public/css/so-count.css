@@ -93,7 +93,9 @@ a.so-counter {
 
 /* yearly tag tables */
 .so-years {
-	margin-top: 8px;
+	border-top: 3px solid #FF9932;
+	margin-top: 6px;
+	padding-top: 24px;
 }
 
 .so-years .more-link {
