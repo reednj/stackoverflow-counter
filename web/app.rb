@@ -140,7 +140,8 @@ get '/?:cur_site?/' do |cur_site|
 		:popular_tags => Tag.top_tags(cur_site).first(settings.max_tags),
 		:so_tag => settings.all_tag,
 		:cur_site => cur_site,
-		:show_yearly_tag_data => (cur_site == 'so')
+		:show_yearly_tag_data => (cur_site == 'so'),
+		:data_age => count_data[:questions].age
 	}
 end
 
@@ -159,7 +160,8 @@ get '/:cur_site/:so_tag/?' do |cur_site, so_tag|
 		:so_tag => so_tag,
 		:so_tag_display => so_tag_display,
 		:tag_name => tag_name,
-		:cur_site => cur_site
+		:cur_site => cur_site,
+		:data_age => count_data.age
 	}
 end
 
