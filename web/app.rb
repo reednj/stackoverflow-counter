@@ -27,6 +27,45 @@ set :all_tag, 'all'
 set :max_tags, 50
 set :max_tags_default, 4
 
+require 'sequel'
+require 'mysql2'
+
+DB = Sequel.connect({
+	:adapter => 'mysql2',
+	:host => $DB_HOST,
+	:username => $DB_USER,
+	:password => $DB_PASS,
+	:database => $DB_NAME
+})
+
+class Tag < Sequel::Model(:Tag)
+	dataset_module do
+		def top_tags(site_id)
+			where(:site => site_id).where("tag_name not like '%-count' and tag_name not like '%-rate'")
+		end
+	end
+
+	def name
+		tag_name.gsub "#{site}-tag-", ''
+	end
+
+	def link_html
+		"<a href='#{tag_url}'>#{Rack::Utils.escape_html name}</a>"
+	end
+
+	def tag_url
+		URI.escape"/#{site}/#{name}"
+	end
+end
+
+class TagValue < Sequel::Model(:Tag)
+
+end
+
+get '/test' do
+	json Tag.top_tags('so').all.map{|a| a.link_html }
+end
+
 helpers do
 	def load_json(path)
 		return {} if ! File.exist? path
@@ -53,6 +92,7 @@ helpers do
 		yield(db) if block_given?
 		db.close
 	end
+
 end
 
 get '/?:cur_site?/' do |cur_site|
