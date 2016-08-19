@@ -95,6 +95,13 @@ class TagValues < Sequel::Model(:TagValue)
 	def estimated_tag_value
 		tag_value + rate_per_sec * age
 	end
+
+	def to_json(*args)
+		self.values.merge({
+			:age => self.age,
+			:rate_per_sec => rate_per_sec
+		}).to_json(*args)
+	end
 end
 
 get '/test' do

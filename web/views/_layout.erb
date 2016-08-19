@@ -7,36 +7,75 @@
 <meta http-equiv="REFRESH" content="300">
 <meta name='viewport' content='width=device-width, initial-scale=1.0' />
 
-<script src='/js/mootools-core-full-compat-yc.js' type='text/javascript'></script>
-<script src='/js/countdown.js?v=<%= settings.version %>' type='text/javascript'></script>
-
-<script type='text/javascript'>
-	var SoUi = {
-		tags_visible: false,
-		
-		init: function() {
-		},
-		
-		
-		show_tags: function() {
-			$$('.so-tag-list a.hidden').removeClass('hidden');
-		},
-
-	}
-</script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
 <script type='text/javascript'>
 	var _rate_data = <%== count_data.to_json %>;
 </script>
 
+<script type='text/javascript'>
+	
+	var Counter = (function(){
+		var v = function(key, data){
+			this.key = key || 'none';
+			this.rateData = data;
+			this.loadTime = Date.now();
+		};
+
+		v.prototype.age = function() {
+			var pageAge = (Date.now() - this.loadTime) / 1000.0;
+			return this.rateData.age + pageAge;
+		};
+
+		v.prototype.estimatedCount = function() {
+			return this.rateData.tag_value + this.age() * this.rateData.rate_per_sec;
+		};
+
+		return v;
+	})();	
+
+	(function() {
+		String.prototype.toN0 = function() {
+			return this.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+		}
+
+		Number.prototype.toN0 = function() {
+			return Math.round(this).toString().toN0();
+		}
+
+		Function.prototype.periodical = function(interval) {
+			return setInterval(this, interval);
+		}
+	})();
+
+	$(document).ready(function() {
+		$('#so-st-link').click(function(){
+			$('.so-tag-list a.hidden').removeClass('hidden');
+		});
+
+		var counters = $.map(_rate_data, function(v, k) {
+			return new Counter(k, v);
+		});
+
+		(function(){
+			for(var i=0; i < counters.length; i++) {
+				var c = counters[i];
+				var s = c.estimatedCount().toN0();
+				$('.so-counter.' + c.key).html(s);
+			}
+		}).periodical(500);
+	});
+
+</script>
+
 <%== yield_content :header %>
 
-<link rel="stylesheet" href="/css/default.css?v=<%= settings.version %>" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="/css/so-count.css?v=<%= settings.version %>" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="/css/default.css?v=<%= settings.version %>" type="text/css">
+<link rel="stylesheet" href="/css/so-count.css?v=<%= settings.version %>" type="text/css">
 
 </head>
 
-<body onload='SoUi.init();'>
+<body>
 
 <div class="wrapper">
 
@@ -62,7 +101,9 @@
 		<div class='so-title'>
 			<a href='/'>analytics<b>overflow</b></a>
 
-			<%== so_tag != settings.all_tag ? "/ <span style='color:gray'>#{so_tag_display}</span>" : '' %>
+			<% if so_tag != settings.all_tag %>
+				/ <span style='color:gray'><%= so_tag_display %></span>
+			<% end %>
 		</div>
 	</div>
 	
@@ -75,7 +116,7 @@
 			<%== tag.link_html :css_class => (i > settings.max_tags_default ? 'hidden' : '') %>		
 		<% end %>
 		
-		<a id='so-st-link' href="javascript:SoUi.show_tags();"><i>more...</i></a>
+		<a id='so-st-link'><i>more...</i></a>
 	</div>
 	
 	<div class='clear'></div>

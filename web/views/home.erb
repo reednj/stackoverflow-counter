@@ -19,7 +19,7 @@
 	
 	<% count_data.each do |k, v| %>
 		<div class='so-counter-block'>
-			<div id='<%= "#{cur_site}-#{k}" %>-count' class='so-counter'> <%= v.estimated_tag_value.to_n0 %> </div>
+			<div id='<%= "#{cur_site}-#{k}" %>-count' class='so-counter <%= k %>'> <%= v.estimated_tag_value.to_n0 %> </div>
 			<div class='so-label'> <%= k.to_s %> <span class='so-rate'><%= v.rate_per_hour.round %> / hr</span> </div>
 		</div>
 	<% end %>
