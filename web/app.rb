@@ -13,7 +13,7 @@ require '../shared/extensions'
 #set :raise_errors, false
 #set :show_exceptions, true
 
-set :version, '2.1'
+set :version, '3.0'
 set :erb, :escape_html => true
 
 set :all_tag, 'all'
