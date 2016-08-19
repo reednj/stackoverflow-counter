@@ -12,8 +12,8 @@
 <div class='so-counter-list'>
 	
 	<div class='so-counter-block right'>
-		<div id='<%= question_count_tag %>' class='so-counter'> ... </div>
-		<div class='so-label'> <%= tag_type %> <span class='so-rate'><%= to_daily(count_data[0]) %></span> </div>
+		<div id='<%= tag_name %>' class='so-counter'> <%= count_data.estimated_tag_value.to_n0 %> </div>
+		<div class='so-label'>questions <span class='so-rate'><%= (count_data.rate_per_hour * 24).to_n0 %> / day</span> </div>
 	</div>
 
 	<div class='clear'></div>

@@ -149,33 +149,18 @@ end
 get '/:cur_site/:so_tag/?' do |cur_site, so_tag|
 	cur_site ||= 'so'
 	so_tag ||= settings.all_tag
-	return 'not found' if so_tag == 'apache'
 	
 	so_tag_display = so_tag
-
-	# is this one of the main 3 tags? they get treated differently...
-	if ['question', 'answer', 'comment'].include?(so_tag)
-		question_count_tag = "#{cur_site}-#{so_tag}-count"
-		tag_type = so_tag + 's'
-		so_tag_display = so_tag + 's'
-	else	
-		question_count_tag = "#{cur_site}-tag-#{so_tag}"
-		tag_type = 'questions'
-	end
-
-	q_count = nil
-
-	db_exec do |db|
-		q_count = db.get_rate_from_count(question_count_tag)
-	end
+	tag_name = "#{cur_site}-tag-#{so_tag}"
+	count_data = Tag.with_name(tag_name).latest_value
+	halt 404, 'tag not found' if count_data.nil?
 
 	erb :tag, :layout => :_layout, :locals => {
-		:count_data => [q_count],
+		:count_data => count_data,
 		:popular_tags => Tag.top_tags(cur_site).first(32),
 		:so_tag => so_tag,
 		:so_tag_display => so_tag_display,
-		:question_count_tag => question_count_tag,
-		:tag_type => tag_type,
+		:tag_name => tag_name,
 		:cur_site => cur_site
 	}
 end
