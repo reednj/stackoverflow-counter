@@ -4,10 +4,8 @@ require 'sinatra/content_for'
 require "sinatra/reloader" if development?
 
 require 'json'
-require 'erubis'
-require 'pp'
-require 'cgi'
 require 'yaml'
+require 'erubis'
 
 $LOAD_PATH << './lib' << '../shared'
 
@@ -139,7 +137,7 @@ get '/?:cur_site?/' do |cur_site|
 
 	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
-		:popular_tags => Tag.top_tags(cur_site).first(32),
+		:popular_tags => Tag.top_tags(cur_site).first(settings.max_tags),
 		:so_tag => settings.all_tag,
 		:cur_site => cur_site,
 		:show_yearly_tag_data => (cur_site == 'so')
@@ -157,7 +155,7 @@ get '/:cur_site/:so_tag/?' do |cur_site, so_tag|
 
 	erb :tag, :layout => :_layout, :locals => {
 		:count_data => count_data,
-		:popular_tags => Tag.top_tags(cur_site).first(32),
+		:popular_tags => Tag.top_tags(cur_site).first(settings.max_tags),
 		:so_tag => so_tag,
 		:so_tag_display => so_tag_display,
 		:tag_name => tag_name,

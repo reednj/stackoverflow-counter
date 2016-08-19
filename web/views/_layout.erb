@@ -72,7 +72,7 @@
 		<a href='/<%= cur_site %>/'>all</a>
 
 		<% popular_tags.each_with_index do |tag, i| %>
-			<%== tag.link_html :css_class => (i > 5 ? 'hidden' : '') %>		
+			<%== tag.link_html :css_class => (i > settings.max_tags_default ? 'hidden' : '') %>		
 		<% end %>
 		
 		<a id='so-st-link' href="javascript:SoUi.show_tags();"><i>more...</i></a>
