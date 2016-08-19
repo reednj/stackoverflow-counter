@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-require 'open-uri'
 require 'mysql'
 
 require '../lib/so-db'
@@ -12,16 +11,14 @@ REQUEST_DELAY = 3;
 def main()
 	site_prefix = 'so'
 	site_prefix = ARGV[-2][0..1] if ARGV.size == 2
-	
-	api_address = 'http://api.stackexchange.com/2.2/'
+
 	site_name = 'stackoverflow'
 	site_name = ARGV[-1] if ARGV.size == 2
 
     so = StackOverflow.new(site_name);
     dbh =  SoSql.real_connect();
 
-	puts 'analyticsoverflow data retriever - Nathan Reed (c) 2010'
-	puts "getting data for: '#{api_address}'"
+	puts "getting data for '#{site_name}'"
 	
 	# insert the total question count and rate
 	dbh.insert_tagvalue("#{site_prefix}-question-count", so.question_count);
