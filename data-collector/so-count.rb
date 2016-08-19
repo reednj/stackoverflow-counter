@@ -13,7 +13,7 @@ require 'so-web';
 REQUEST_DELAY = 3;
 
 def main()
-	site_prefix = $SITE_TAG_PREFIX;
+	site_prefix = 'so'
 	site_prefix = ARGV[-2][0..1] if ARGV.size == 2
 	
 	api_address = 'http://api.stackexchange.com/2.2/'

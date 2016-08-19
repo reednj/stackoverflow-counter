@@ -1,8 +1,9 @@
 # Nathan Reed, 29/04/2010
 
-require_relative './so-config.rb'
 require 'mysql'
 require 'date'
+
+require_relative './so-config.rb'
 require_relative './extensions'
 
 class EasySql < Mysql

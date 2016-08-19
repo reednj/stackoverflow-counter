@@ -7,8 +7,8 @@ require 'json'
 require 'yaml'
 require 'erubis'
 
-require '../shared/models'
-require '../shared/extensions'
+require './lib/models'
+require './lib/extensions'
 
 #set :raise_errors, false
 #set :show_exceptions, true
