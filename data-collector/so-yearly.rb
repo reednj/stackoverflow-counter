@@ -1,6 +1,4 @@
-#!/usr/bin/ruby
-
-$LOAD_PATH << './lib' << '../shared'
+#!/usr/bin/env ruby
 
 require 'rubygems'
 require 'time'
@@ -8,7 +6,7 @@ require 'mysql2'
 require 'sequel'
 require 'json'
 
-require 'so-config'
+require '../lib/so-config'
 
 class App
 	def main

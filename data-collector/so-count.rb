@@ -1,14 +1,11 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
-$LOAD_PATH << './lib' << '../shared'
+require 'rubygems'
+require 'open-uri'
+require 'mysql'
 
-require 'rubygems';
-require 'nokogiri';
-require 'open-uri';
-require 'mysql';
-
-require 'so-db';
-require 'so-web';
+require '../lib/so-db'
+require '../lib/so-web'
 
 REQUEST_DELAY = 3;
 
@@ -20,7 +17,7 @@ def main()
 	site_name = 'stackoverflow'
 	site_name = ARGV[-1] if ARGV.size == 2
 
-    so = StackOverflow.new(api_address, site_name);
+    so = StackOverflow.new(site_name);
     dbh =  SoSql.real_connect();
 
 	puts 'analyticsoverflow data retriever - Nathan Reed (c) 2010'
@@ -42,7 +39,7 @@ def main()
 
 	# insert the count for each of the tags	
 	sleep(REQUEST_DELAY);
-	so.tag_counts.each do |curtag|
+	so.tags.each do |curtag|
 		dbh.insert_tagvalue("#{site_prefix}-tag-#{curtag['name']}", curtag['count']);
 	end
 	puts '  question counts added (grouped by tag)'
