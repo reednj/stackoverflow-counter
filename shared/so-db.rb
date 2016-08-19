@@ -40,6 +40,10 @@ class Numeric
 
 		"#{s}#{unit}"
 	end
+
+	def to_n0
+		self.round.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+	end
 end
 
 

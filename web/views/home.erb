@@ -17,29 +17,11 @@
 
 <div class='so-counter-list'>
 	
-	<% if so_tag == settings.all_tag %>
-	<div class='so-counter-block'>
-		<div id='<%= cur_site %>-comment-count' class='so-counter'> ... </div>
-		<div class='so-label'> comments <span class='so-rate'><%= to_hourly(count_data[2]) %></span> </div>
-	</div>
-
-	<div class='so-counter-block'>
-		<div id='<%= cur_site %>-answer-count' class='so-counter'>... </div>
-		<div class='so-label'> answers <span class='so-rate'><%= to_hourly(count_data[1]) %></span> </div>
-	</div>
-	
-	<div class='so-counter-block'>
-		<div id='<%= cur_site %>-question-count' class='so-counter'> ... </div>
-		<div class='so-label'> questions <span class='so-rate'><%= to_hourly(count_data[0]) %></span> </div>
-	</div>
-	
-	<% else %>
-
-	<div class='so-counter-block right'>
-		<div id='<%= question_count_tag %>' class='so-counter'> ... </div>
-		<div class='so-label'> <%= tag_type %> <span class='so-rate'><%= to_daily(count_data[0]) %></span> </div>
-	</div>
-	
+	<% count_data.each do |k, v| %>
+		<div class='so-counter-block'>
+			<div id='<%= "#{cur_site}-#{k}" %>-count' class='so-counter'> <%= v.estimated_tag_value.to_n0 %> </div>
+			<div class='so-label'> <%= k.to_s %> <span class='so-rate'><%= v.rate_per_hour.round %> / hr</span> </div>
+		</div>
 	<% end %>
 
 	<div class='clear'></div>

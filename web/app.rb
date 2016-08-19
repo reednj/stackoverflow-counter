@@ -90,6 +90,10 @@ class TagValues < Sequel::Model(:TagValue)
 		(self.tag_value - previous.tag_value).to_f / (self.created_date - previous.created_date).to_f
 	end
 
+	def rate_per_hour
+		rate_per_sec * 3600
+	end
+
 	def estimated_tag_value
 		tag_value + rate_per_sec * age
 	end
@@ -126,16 +130,12 @@ end
 
 get '/?:cur_site?/' do |cur_site|
 	cur_site ||= 'so'
-	count_data = nil
 
-	db_exec do |db|
-		# its the front page. Get the three main counters.
-		
-		q_count = db.get_rate_from_rate("#{cur_site}-question")
-		a_count = db.get_rate_from_rate("#{cur_site}-answer")
-		c_count = db.get_rate_from_count("#{cur_site}-comment-count")
-		count_data = [q_count, a_count, c_count]
-	end
+	count_data = {
+		:comments => Tag.with_name("#{cur_site}-comment-count").latest_value,
+		:answers => Tag.with_name("#{cur_site}-answer-count").latest_value,
+		:questions => Tag.with_name("#{cur_site}-question-count").latest_value
+	}
 
 	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
