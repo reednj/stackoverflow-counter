@@ -17,25 +17,11 @@
 		init: function() {
 		},
 		
-		toggle_tags: function() {
-			if(this.tags_visible == false) {
-				this.show_tags();
-			} else {
-				this.hide_tags();
-			}
-			
-			this.tags_visible = !this.tags_visible;
-		},
 		
 		show_tags: function() {
-			$$('.so-more-tags').each(function(e) {e.show();});
-			$('so-st-link').innerHTML = 'less...'
+			$$('.so-tag-list a.hidden').removeClass('hidden');
 		},
-		
-		hide_tags: function() {
-			$$('.so-more-tags').each(function(e) {e.hide();});
-			$('so-st-link').innerHTML = 'more...'
-		}
+
 	}
 </script>
 
@@ -58,10 +44,8 @@
 	<div class='left'>
 		<div class='so-site-select'>
 			site: 
-	<%
-		s = ""
-		site_list.each_with_index do |site_item, i| 
-			if site_item == cur_site %>
+		<% site_list.each_with_index do |site_item, i| %>
+			<% if site_item == cur_site %>
 				<span><%= site_item %></span>
 			<% else %>
 				<a href='/<%= site_item %>/'><%= site_item %></a>
@@ -84,32 +68,14 @@
 	
 	<div class='so-tag-list'>
 		view by tag: 
-
-		<% 
-
-		tag_index = popular_tags.index(so_tag)
-		tag_index = -1 if tag_index.nil?
 		
-		popular_tags.each_with_index do |cur_tag, i|
+		<a href='/<%= cur_site %>/'>all</a>
 
-			tag_attr = []
-			tag_attr << "class='so-more-tags'" if i > settings.max_tags_default
-			tag_attr << "style='display:none'" if i > settings.max_tags_default and tag_index <= settings.max_tags_default
-				
-			cur_tag_name = cur_tag['tag_name'].split('-', 3)[-1]
-			cur_tag_site = cur_tag['site']
-			%>
-
-			<% if cur_tag_name == so_tag %>
-				<%== "<span #{tag_attr.join(' ')}> #{cur_tag_name} </span>" %>
-			<% elsif cur_tag == settings.all_tag || cur_tag_name == 'all' %>
-				<%== "<a #{tag_attr.join(' ')} href='/#{cur_tag_site}/'> #{cur_tag_name} </a>" %>
-			<% else  %>
-				<%== "<a #{tag_attr.join(' ')} href='/#{cur_tag_site}/#{CGI.escape(cur_tag_name)}/'> #{cur_tag_name} </a>" %>
-			<% end %>
+		<% popular_tags.each_with_index do |tag, i| %>
+			<%== tag.link_html :css_class => (i > 5 ? 'hidden' : '') %>		
 		<% end %>
 		
-		<a id='so-st-link' href="javascript:SoUi.toggle_tags();"><i>more...</i></a>
+		<a id='so-st-link' href="javascript:SoUi.show_tags();"><i>more...</i></a>
 	</div>
 	
 	<div class='clear'></div>

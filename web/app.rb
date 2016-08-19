@@ -41,7 +41,7 @@ DB = Sequel.connect({
 class Tag < Sequel::Model(:Tag)
 	dataset_module do
 		def top_tags(site_id)
-			where(:site => site_id).where("tag_name not like '%-count' and tag_name not like '%-rate'")
+			where(:site => site_id).where("tag_name not like '%-count' and tag_name not like '%-rate'").limit(100)
 		end
 	end
 
@@ -49,8 +49,9 @@ class Tag < Sequel::Model(:Tag)
 		tag_name.gsub "#{site}-tag-", ''
 	end
 
-	def link_html
-		"<a href='#{tag_url}'>#{Rack::Utils.escape_html name}</a>"
+	def link_html(options = {})
+		css_class = options[:css_class]
+		"<a href='#{tag_url}' class='#{css_class}'>#{Rack::Utils.escape_html name}</a>"
 	end
 
 	def tag_url
@@ -81,12 +82,6 @@ helpers do
 		['so', 'sf', 'su']
 	end
 
-	def get_popular_tags(db, site_code)
-		popular_tags = db.get_tags(site_code)
-		popular_tags.insert(0, {'tag_name'=> "ao-tag-#{settings.all_tag}", 'site' => site_code})
-		return popular_tags
-	end
-
 	def db_exec
 		db = SoSql.real_connect
 		yield(db) if block_given?
@@ -98,7 +93,6 @@ end
 get '/?:cur_site?/' do |cur_site|
 	cur_site ||= 'so'
 	count_data = nil
-	popular_tags = nil
 
 	db_exec do |db|
 		# its the front page. Get the three main counters.
@@ -107,20 +101,18 @@ get '/?:cur_site?/' do |cur_site|
 		a_count = db.get_rate_from_rate("#{cur_site}-answer")
 		c_count = db.get_rate_from_count("#{cur_site}-comment-count")
 		count_data = [q_count, a_count, c_count]
-
-		popular_tags = get_popular_tags(db, cur_site)
 	end
 
 	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
-		:popular_tags => popular_tags,
+		:popular_tags => Tag.top_tags(cur_site).first(32),
 		:so_tag => settings.all_tag,
 		:cur_site => cur_site,
 		:show_yearly_tag_data => (cur_site == 'so')
 	}
 end
 
-get '/:cur_site/:so_tag/' do |cur_site, so_tag|
+get '/:cur_site/:so_tag/?' do |cur_site, so_tag|
 	cur_site ||= 'so'
 	so_tag ||= settings.all_tag
 	return 'not found' if so_tag == 'apache'
@@ -138,16 +130,14 @@ get '/:cur_site/:so_tag/' do |cur_site, so_tag|
 	end
 
 	q_count = nil
-	popular_tags = nil
 
 	db_exec do |db|
 		q_count = db.get_rate_from_count(question_count_tag)
-		popular_tags = get_popular_tags(db, cur_site)
 	end
 
 	erb :tag, :layout => :_layout, :locals => {
 		:count_data => [q_count],
-		:popular_tags => popular_tags,
+		:popular_tags => Tag.top_tags(cur_site).first(32),
 		:so_tag => so_tag,
 		:so_tag_display => so_tag_display,
 		:question_count_tag => question_count_tag,
