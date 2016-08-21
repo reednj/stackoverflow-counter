@@ -1,4 +1,30 @@
+require 'digest/sha1'
 
+#
+# ObjectCache
+#
+# This is a simple in process memory cache designed to be used with
+# Rack/sinatra for caching request data. It is not very efficient, as
+# nothing is shared between the processes, so if it is running on passenger
+# each process will have its own cache. However, I think it makes up for this
+# with simplicity, so if the underlying request doesn't take too long, and not
+# much is being stored, its probably worth going with this over a more
+# complicated solution.
+#
+# Usage:
+#
+#     # without the sinatra helper
+#     obj_cache = ObjectCache.new
+#     ...
+#
+#     obj_cache.cache 'home_page_data', :ttl => 5.minutes do
+#         # do some slow stuff
+#     end
+#
+#    # with the sinatra helper - the key will be generated
+#    # from the request object
+#    cache_object :for => 5.minutes { ... }
+#
 class ObjectCache
 	attr_accessor :items
 
@@ -33,6 +59,11 @@ class ObjectCache
 	end
 end
 
+
+# we could actually make this a bit more generic, more of a protocol / mixin
+# type thing, so that it could store really any sort of data. I _think_ the only
+# required methods would be +expired?+, +data+ and +data=+, with the rest depending
+# on the underlying store
 class ObjectCacheItem
 	attr_accessor :created_date
 	attr_accessor :ttl
@@ -53,18 +84,21 @@ class ObjectCacheItem
 	end
 end
 
-class App
-	def main
-		oc = ObjectCache.new
-		loop do
-			puts oc.cache('1234', :ttl => 10) { 
-				sleep(2)
-				Time.now.to_s
-			} 
+if defined? Sinatra::Application
+	OBJECT_CACHE = ObjectCache.new
 
-			sleep 0.5
+	helpers do
+		def cache_object(options = {}, &block)
+			key = request.url.sha1
+			options[:ttl] = options[:ttl] || options[:for] || 60.0
+			OBJECT_CACHE.cache(key, options, &block)
 		end
 	end
 end
 
-App.new.main
+class String
+	def sha1
+		Digest::SHA1.hexdigest self
+	end
+end
+

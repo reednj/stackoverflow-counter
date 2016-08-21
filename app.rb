@@ -9,6 +9,7 @@ require 'erubis'
 
 require './lib/models'
 require './lib/extensions'
+require './lib/sinatra-object_cache'
 
 #set :raise_errors, false
 #set :show_exceptions, true
@@ -19,6 +20,12 @@ set :erb, :escape_html => true
 set :all_tag, 'all'
 set :max_tags, 50
 set :max_tags_default, 4
+
+configure :development do
+	also_reload './lib/extensions.rb'
+	also_reload './lib/models.rb'
+	also_reload './lib/sinatra-object_cache.rb'
+end
 
 helpers do
 	def load_json(path)
@@ -33,6 +40,13 @@ helpers do
 
 	def site_list
 		['so', 'sf', 'su']
+	end
+end
+
+get '/testcache' do
+	cache_object :for => 10.0 do
+		sleep 1.5
+		Time.now.to_s
 	end
 end
 
