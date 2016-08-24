@@ -164,6 +164,10 @@ a.so-counter {
 	text-align: right;
 }
 
+.so-year-tag .highlight {
+	background-color: #fd4;
+}
+
 .hidden {
 	display:none;
 }

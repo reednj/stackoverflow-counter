@@ -9,6 +9,17 @@
 		$('.so-year-tag tr').removeClass('hidden');
 		$('.so-years .more-link').addClass('hidden');
 	}
+
+	$(document).ready(function() {
+		$('td.tag-name').mouseenter(function() {
+			var id = $(this).attr('data-id');
+			$('.tag-id-' + id).addClass('highlight');
+		}).mouseleave(function() {
+			var id = $(this).attr('data-id');
+			$('.tag-id-' + id).removeClass('highlight');
+		});
+	});
+
 </script>
 
 <% end %>
@@ -40,7 +51,7 @@
 			<% (yearly_tag_data[year.to_s.to_sym] || []).first(16).each_with_index do |tag, i| %>
 				<tr class='<%= i >= 8 ? 'hidden' : '' %>'>
 					<td class='td-list-index'><%= i + 1 %>.</td>
-					<td class='td-desc'><%= tag[:description] %></td>
+					<td class='td-desc tag-name tag-id-<%= tag[:tag_id] %>' data-id='<%= tag[:tag_id] %>'><%= tag[:description] %></td>
 					<td class='td-count'><%= (tag[:tag_value_delta] / 1000).round(1) %>k</td>
 				</tr>
 			<% end %>

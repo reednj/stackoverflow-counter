@@ -46,7 +46,8 @@ class App
 		start_date = Time.gm(year, 1, 1)
 		end_date = Time.gm(year + 1, 1, 1)
 
-		query = "select 
+		query = "select
+			t.tag_id,
 			t.tag_name,
 			t.description,
 			(max(tag_value) - min(tag_value)) as tag_value_delta
