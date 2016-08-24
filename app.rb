@@ -53,11 +53,13 @@ end
 get '/?:cur_site?/' do |cur_site|
 	cur_site ||= 'so'
 
-	count_data = {
-		:comments => Tag.with_name("#{cur_site}-comment-count").latest_value,
-		:answers => Tag.with_name("#{cur_site}-answer-count").latest_value,
-		:questions => Tag.with_name("#{cur_site}-question-count").latest_value
-	}
+	count_data = cache_object(:for => 60.0) do
+		{
+			:comments => Tag.with_name("#{cur_site}-comment-count").latest_value,
+			:answers => Tag.with_name("#{cur_site}-answer-count").latest_value,
+			:questions => Tag.with_name("#{cur_site}-question-count").latest_value
+		}
+	end
 
 	erb :home, :layout => :_layout, :locals => {
 		:count_data => count_data,
@@ -75,7 +77,10 @@ get '/:cur_site/:so_tag/?' do |cur_site, so_tag|
 	
 	so_tag_display = so_tag
 	tag_name = "#{cur_site}-tag-#{so_tag}"
-	count_data = Tag.with_name(tag_name).latest_value
+	count_data = cache_object(:for => 60.0 * 15) do 
+		Tag.with_name(tag_name).latest_value
+	end
+
 	halt 404, 'tag not found' if count_data.nil?
 
 	erb :tag, :layout => :_layout, :locals => {
