@@ -34,8 +34,12 @@ helpers do
 	end
 
 	def yearly_tag_data
-		path = File.exist?('../yearly-tags.json') ? '../yearly-tags.json' : 'yearly-tags.json'
-		@yearly_tag_data ||= load_json(path)
+		begin
+			path = File.exist?('../yearly-tags.json') ? '../yearly-tags.json' : 'yearly-tags.json'
+			@yearly_tag_data ||= load_json(path)
+		rescue => e
+			{}
+		end
 	end
 
 	def site_list
