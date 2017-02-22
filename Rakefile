@@ -23,7 +23,7 @@ end
 task :config do |t|
     home = '/home/reednj'
     config = File.join home, 'code/config_backup/so'
-    cp "#{config}/*", ".lib"
+    sh "cp #{config}/* ./lib"
 end
 
 task :latest do |t|
