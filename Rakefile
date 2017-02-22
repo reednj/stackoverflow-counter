@@ -6,12 +6,13 @@ end
 desc "release the app to prod"
 task :release do
     remote = "reednj@paint.reednj.com"
+    commands = ["cd so.reednj.com", "git reset --hard", "rake build"]
     sh "git push #{remote}:so.reednj.com/ master"
-    sh "ssh #{remote} cd so.reednj.com;git reset-- hard;rake build;"
+    sh "ssh #{remote} \"#{commands.join ';'}\""
 end
 
 desc "build the webapp on prod"
-task :build => [:config, :restart] do
+task :build => [:data, :config, :restart] do
     puts 'build complete'
 end
 
@@ -27,3 +28,6 @@ task :config do |t|
     sh "cp #{config}/* ./lib"
 end
 
+file "data" do |t|
+    sh "ln -s ~/#{t.name}"
+end
