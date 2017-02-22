@@ -3,14 +3,15 @@ task :default do
     sh "rake -T"
 end
 
+desc "release the app to prod"
 task :release do
     remote = "reednj@paint.reednj.com"
     sh "git push #{remote}:so.reednj.com/ master"
-    sh "ssh #{remote} cd so.reednj.com; rake build;"
+    sh "ssh #{remote} cd so.reednj.com;git reset-- hard;rake build;"
 end
 
 desc "build the webapp on prod"
-task :build => [:latest, :config, :restart] do
+task :build => [:config, :restart] do
     puts 'build complete'
 end
 
@@ -26,6 +27,3 @@ task :config do |t|
     sh "cp #{config}/* ./lib"
 end
 
-task :latest do |t|
-    sh 'git reset --hard'
-end
