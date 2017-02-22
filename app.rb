@@ -35,7 +35,7 @@ helpers do
 
 	def yearly_tag_data
 		begin
-			path = File.exist?('../yearly-tags.json') ? '../yearly-tags.json' : './data/yearly-tags.json'
+			path = File.exist?('./yearly-tags.json') ? './yearly-tags.json' : './data/yearly-tags.json'
 			@yearly_tag_data ||= load_json(path)
 		rescue => e
 			{}
