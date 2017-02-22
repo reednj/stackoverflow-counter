@@ -12,7 +12,7 @@ class App
 	def main
 		year = Time.now.year
 		year = ARGV.last.to_i if ARGV.length > 0
-		json_path = '../yearly-tags.json'
+		json_path = '../data/yearly-tags.json'
 
 		current_data = load_json json_path
 		year_data = get_top_tags_for_year(year)
